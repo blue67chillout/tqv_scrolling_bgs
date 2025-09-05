@@ -52,8 +52,8 @@ module tqvp_example (
     reg hsync;
     reg vsync;
     wire visible;
-    reg [9:0] pix_x;
-    reg [9:0] pix_y;
+    reg [10:0] pix_x;
+    reg [10:0] pix_y;
     
     wire [1:0]R,G,B ;
 

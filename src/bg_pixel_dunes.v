@@ -87,9 +87,9 @@ localparam C2_X_BASE   = (DISPLAY_MODE == 0) ? 340 : 640;
 localparam C1_Y = GROUND_Y - C1_Y_OFFSET;
 localparam C2_Y = GROUND_Y - C2_Y_OFFSET;
 wire [10:0] temp_c1_x = C1_X_BASE + H_RES - (scroll_counter >> 1);
-wire [9:0]  c1_x = (temp_c1_x >= H_RES) ? (temp_c1_x - H_RES) : temp_c1_x;
+wire [10:0]  c1_x = (temp_c1_x >= H_RES) ? (temp_c1_x - H_RES) : temp_c1_x;
 wire [10:0] temp_c2_x = C2_X_BASE + H_RES - (scroll_counter >> 1);
-wire [9:0]  c2_x = (temp_c2_x >= H_RES) ? (temp_c2_x - H_RES) : temp_c2_x;
+wire [10:0]  c2_x = (temp_c2_x >= H_RES) ? (temp_c2_x - H_RES) : temp_c2_x;
 
 wire in_cloud1_box = (pix_x >= c1_x) && (pix_x < c1_x + CLOUD_W*CLOUD_SCALE) &&
                      (pix_y >= C1_Y) && (pix_y < C1_Y + CLOUD_H*CLOUD_SCALE);
