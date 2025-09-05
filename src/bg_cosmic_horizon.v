@@ -73,8 +73,23 @@ module bg_pixel_planets(
         536, 520, 200, 488, 584, 288, 456, 152, 595, 496
     };
 
-    localparam [9:0] STAR_X [0:NUM_STARS-1] = (DISPLAY_MODE == 0) ? STAR_X_VGA : STAR_X_XGA;
-    localparam [9:0] STAR_Y [0:NUM_STARS-1] = (DISPLAY_MODE == 0) ? STAR_Y_VGA : STAR_Y_XGA;
+wire [9:0] STAR_X [0:NUM_STARS-1];
+wire [9:0] STAR_Y [0:NUM_STARS-1];
+
+genvar i;
+generate
+    if (DISPLAY_MODE == 0) begin : VGA_MODE
+        for (i = 0; i < NUM_STARS; i = i + 1) begin
+            assign STAR_X[i] = STAR_X_VGA[i];
+            assign STAR_Y[i] = STAR_Y_VGA[i];
+        end
+    end else begin : XGA_MODE
+        for (i = 0; i < NUM_STARS; i = i + 1) begin
+            assign STAR_X[i] = STAR_X_XGA[i];
+            assign STAR_Y[i] = STAR_Y_XGA[i];
+        end
+    end
+endgenerate
 
     localparam [1:0] STAR_COLOR [0:NUM_STARS-1] = '{
         0,1,2,0,1,2,0,1,2,0,
