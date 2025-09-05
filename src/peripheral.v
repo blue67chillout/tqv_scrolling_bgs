@@ -32,7 +32,7 @@ module tqvp_example (
 );
 
     
-    reg [7:0] CTRL; // 0x0  | mode | bg1_en | bg2_en | bg3_en | unused(4)|
+    reg [7:0] CTRL; // 0x0  | mode | bg1_en | bg2_en | bg3_en | reset_interrupt| 3 unused bits
 
     //----mode ---///
     // 0 - configure 
@@ -72,9 +72,9 @@ module tqvp_example (
     );
     
 
-    wire [1:0] bg1_R, bg1_G, b1_B;
-    wire [1:0] bg2_R, bg2_G, b2_B;
-    wire [1:0] bg3_R, bg3_G, b3_B;
+    wire [1:0] bg1_R, bg1_G, bg1_B;
+    wire [1:0] bg2_R, bg2_G, bg2_B;
+    wire [1:0] bg3_R, bg3_G, bg3_B;
 
     reg bg1_en, bg2_en, bg3_en;
 
@@ -122,25 +122,6 @@ module tqvp_example (
     // All reads complete in 1 clock
     assign data_ready = 1;
     
-    // // User interrupt is generated on rising edge of ui_in[6], and cleared by writing a 1 to the low bit of address 8.
-    // reg example_interrupt;
-    // reg last_ui_in_6;
-
-    // always @(posedge clk) begin
-    //     if (!rst_n) begin
-    //         example_interrupt <= 0;
-    //     end
-
-    //     if (ui_in[6] && !last_ui_in_6) begin
-    //         example_interrupt <= 1;
-    //     end else if (address == 6'h8 && data_write_n != 2'b11 && data_in[0]) begin
-    //         example_interrupt <= 0;
-    //     end
-
-    //     last_ui_in_6 <= ui_in[6];
-    // end
-
-    // assign user_interrupt = example_interrupt;
 
     // List all unused inputs to prevent warnings
     // data_read_n is unused as none of our behaviour depends on whether
@@ -161,12 +142,31 @@ module tqvp_example (
             (bg3_en) ? bg3_G : 2'b00;
 
     assign B = (multiple_enables) ? 2'b00 :
-            (bg1_en) ? b1_B  :
-            (bg2_en) ? b2_B  :
-            (bg3_en) ? b3_B  : 2'b00;
+            (bg1_en) ? bg1_B  :
+            (bg2_en) ? bg2_B  :
+            (bg3_en) ? bg3_B  : 2'b00;
 
     //raise interrupt if misconfigured
     assign user_interrupt = multiple_enables;
+
+
+    reg interrupt;
+    reg last_ui_in_6;
+
+    always @(posedge clk) begin
+        if (!rst_n) begin
+            interrupt <= 0;
+        end
+
+        if (multiple_enables) begin
+            interrupt <= 1;
+        end else if (CTRL[4]) begin
+            interrupt <= 0;
+        end
+
+    end
+
+    assign user_interrupt = interrupt;
 
     assign uo_out = {vsync, hsync, B, G, R};
 
