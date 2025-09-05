@@ -31,13 +31,7 @@ module bg_pixel_planets(
     // ------------------------Stars-------------------------------------
     localparam STAR_SIZE = 1;
     localparam NUM_STARS = 70;  
-    localparam STAR_SIZE = 1;
-    localparam NUM_STARS = 70;
 
-// ------------------ STAR_X / STAR_Y constants ------------------
-
-localparam STAR_SIZE = 1;
-localparam NUM_STARS = 70;
 
 // Flattened STAR_X / STAR_Y for VGA
 localparam [10*NUM_STARS-1:0] STAR_X_VGA_FLAT = {
