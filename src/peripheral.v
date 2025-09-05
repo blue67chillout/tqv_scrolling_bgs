@@ -117,7 +117,7 @@ module tqvp_example (
         .rst_n        (rst_n),
         .bg_en        (bg2_en),
         .video_active (visible),
-        .pix_x        (pix_x), // truncate from 11-bit
+        .pix_x        (pix_x),
         .pix_y        (pix_y),
         .vsync        (vsync),
         .R            (bg2_R),
