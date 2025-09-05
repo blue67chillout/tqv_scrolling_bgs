@@ -60,7 +60,7 @@ localparam [10*NUM_STARS-1:0] STAR_Y_VGA_FLAT = {
     10'd142,10'd196,10'd374,10'd427,10'd302,10'd72,10'd196,10'd89,10'd552,10'd267
 };
 
-localparam [2*NUM_STARS-1:0] STAR_COLOR_VGA_FLAT = {
+localparam [2*NUM_STARS-1:0] STAR_COLOR_FLAT = {
     2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,
     2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,
     2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,
@@ -70,17 +70,24 @@ localparam [2*NUM_STARS-1:0] STAR_COLOR_VGA_FLAT = {
     2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0
 };
 
-// Flattened STAR_X / STAR_Y for XGA
-localparam [10*NUM_STARS-1:0] STAR_X_XGA_FLAT = {
-    // fill with your XGA values, same style as above
+localparam [9:0] STAR_X_XGA_CONST [0:NUM_STARS-1] = {
+    10'd72, 10'd196, 10'd427, 10'd622, 10'd729, 10'd924, 10'd142, 10'd374, 10'd552, 10'd747,
+    10'd107, 10'd249, 10'd462, 10'd659, 10'd836, 10'd979, 10'd54, 10'd284, 10'd476, 10'd712,
+    10'd156, 10'd299, 10'd441, 10'd584, 10'd726, 10'd868, 10'd179, 10'd321, 10'd569, 10'd782,
+    10'd36, 10'd214, 10'd392, 10'd569, 10'd747, 10'd924, 10'd121, 10'd264, 10'd406, 10'd548,
+    10'd89, 10'd232, 10'd374, 10'd516, 10'd659, 10'd801, 10'd139, 10'd281, 10'd459, 10'd636,
+    10'd64, 10'd96, 10'd128, 10'd160, 10'd192, 10'd224, 10'd256, 10'd288, 10'd320, 10'd352,
+    10'd80, 10'd112, 10'd144, 10'd176, 10'd208, 10'd240, 10'd272, 10'd304, 10'd336, 10'd368
 };
 
-localparam [10*NUM_STARS-1:0] STAR_Y_XGA_FLAT = {
-    // fill with your XGA values
-};
-
-localparam [2*NUM_STARS-1:0] STAR_COLOR_XGA_FLAT = {
-    // fill with your XGA colors
+localparam [9:0] STAR_Y_XGA_CONST [0:NUM_STARS-1] = {
+    10'd89, 10'd196, 10'd142, 10'd374, 10'd267, 10'd552, 10'd124, 10'd321, 10'd214, 10'd444,
+    10'd72, 10'd302, 10'd427, 10'd196, 10'd552, 10'd142, 10'd249, 10'd374, 10'd107, 10'd476,
+    10'd374, 10'd124, 10'd249, 10'd462, 10'd196, 10'd587, 10'd72, 10'd316, 10'd441, 10'd214,
+    10'd267, 10'd392, 10'd142, 10'd516, 10'd284, 10'd409, 10'd214, 10'd462, 10'd107, 10'd552,
+    10'd196, 10'd427, 10'd72, 10'd302, 10'd374, 10'd124, 10'd249, 10'd462, 10'd196, 10'd587,
+    10'd528, 10'd512, 10'd464, 10'd560, 10'd576, 10'd592, 10'd608, 10'd624, 10'd640, 10'd648,
+    10'd536, 10'd520, 10'd200, 10'd488, 10'd584, 10'd288, 10'd456, 10'd152, 10'd595, 10'd496
 };
 
 // Choose based on display mode
@@ -94,13 +101,13 @@ generate
         for (i = 0; i < NUM_STARS; i = i + 1) begin : STAR_ASSIGN_VGA
             assign STAR_X[i]     = STAR_X_VGA_FLAT[i*10 +: 10];
             assign STAR_Y[i]     = STAR_Y_VGA_FLAT[i*10 +: 10];
-            assign STAR_COLOR[i] = STAR_COLOR_VGA_FLAT[i*2 +: 2];
+            assign STAR_COLOR[i] = STAR_COLOR_FLAT[i*2 +: 2];
         end
     end else begin : XGA_MODE
         for (i = 0; i < NUM_STARS; i = i + 1) begin : STAR_ASSIGN_XGA
             assign STAR_X[i]     = STAR_X_XGA_FLAT[i*10 +: 10];
             assign STAR_Y[i]     = STAR_Y_XGA_FLAT[i*10 +: 10];
-            assign STAR_COLOR[i] = STAR_COLOR_XGA_FLAT[i*2 +: 2];
+            assign STAR_COLOR[i] = STAR_COLOR_FLAT[i*2 +: 2];
         end
     end
 endgenerate
