@@ -47,8 +47,7 @@ module tqvp_example (
             end
         end
     end
-
-
+    
     reg hsync;
     reg vsync;
     wire visible;
@@ -177,22 +176,24 @@ module tqvp_example (
     assign G = (bg1_en)? bg1_G : 2'b0 ;
     assign B = (bg1_en)? bg1_B : 2'b0 ;
 
-    // reg interrupt;
+    wire multiple_enables = 1'b0 ; 
 
-    // always @(posedge clk) begin
-    //     if (!rst_n) begin
-    //         interrupt <= 0;
-    //     end
+    reg interrupt;
 
-    //     if (multiple_enables) begin
-    //         interrupt <= 1;
-    //     end else if (CTRL[4]) begin
-    //         interrupt <= 0;
-    //     end
+    always @(posedge clk) begin
+        if (!rst_n) begin
+            interrupt <= 0;
+        end
 
-    // end
+        if (multiple_enables) begin
+            interrupt <= 1;
+        end else if (CTRL[4]) begin
+            interrupt <= 0;
+        end
 
-    // assign user_interrupt = interrupt;
+    end
+
+    assign user_interrupt = interrupt;
 
     assign uo_out = {vsync, hsync, B, G, R};
 
