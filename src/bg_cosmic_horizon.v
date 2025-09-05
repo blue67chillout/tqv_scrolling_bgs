@@ -95,12 +95,14 @@ wire [1:0] STAR_COLOR [0:NUM_STARS-1];
 
 genvar i;
 generate
-    for (i = 0; i < NUM_STARS; i = i + 1) begin : STAR_ASSIGN
-        if (DISPLAY_MODE == 0) begin
+    if (DISPLAY_MODE == 0) begin : VGA_MODE
+        for (i = 0; i < NUM_STARS; i = i + 1) begin : STAR_ASSIGN
             assign STAR_X[i]     = STAR_X_VGA_FLAT[i*10 +: 10];
             assign STAR_Y[i]     = STAR_Y_VGA_FLAT[i*10 +: 10];
             assign STAR_COLOR[i] = STAR_COLOR_FLAT[i*2 +: 2];
-        end else begin
+        end
+    end else begin : XGA_MODE
+        for (i = 0; i < NUM_STARS; i = i + 1) begin : STAR_ASSIGN
             assign STAR_X[i]     = STAR_X_XGA_FLAT[i*10 +: 10];
             assign STAR_Y[i]     = STAR_Y_XGA_FLAT[i*10 +: 10];
             assign STAR_COLOR[i] = STAR_COLOR_XGA_FLAT[i*2 +: 2];
