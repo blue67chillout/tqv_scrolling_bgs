@@ -2,8 +2,8 @@ module bg_pixel_dunes (
     input  wire        rst_n,
     input  wire        bg_en,
     input  wire        video_active,  // 1 = pixel is valid
-    input  wire [9:0]  pix_x,
-    input  wire [9:0]  pix_y,
+    input  wire [10:0]  pix_x,
+    input  wire [10:0]  pix_y,
     input  wire        vsync,
     output wire [1:0]  R,
     output wire [1:0]  G,
@@ -96,15 +96,15 @@ wire in_cloud1_box = (pix_x >= c1_x) && (pix_x < c1_x + CLOUD_W*CLOUD_SCALE) &&
 wire in_cloud2_box = (pix_x >= c2_x) && (pix_x < c2_x + CLOUD_W*CLOUD_SCALE) &&
                      (pix_y >= C2_Y) && (pix_y < C2_Y + CLOUD_H*CLOUD_SCALE);
 
-wire [9:0] c1_local_x = pix_x - c1_x;
-wire [9:0] c1_local_y = pix_y - C1_Y;
-wire [9:0] c2_local_x = pix_x - c2_x;
-wire [9:0] c2_local_y = pix_y - C2_Y;
+wire [10:0] c1_local_x = pix_x - c1_x;
+wire [10:0] c1_local_y = pix_y - C1_Y;
+wire [10:0] c2_local_x = pix_x - c2_x;
+wire [10:0] c2_local_y = pix_y - C2_Y;
 
-wire [4:0] c1_sprite_x = c1_local_x >> 1; // CLOUD_SCALE = 2
-wire [2:0] c1_sprite_y = c1_local_y >> 1;
-wire [4:0] c2_sprite_x = c2_local_x >> 1;
-wire [2:0] c2_sprite_y = c2_local_y >> 1;
+wire [10:0] c1_sprite_x = c1_local_x >> 1; // CLOUD_SCALE = 2
+wire [10:0] c1_sprite_y = c1_local_y >> 1;
+wire [10:0] c2_sprite_x = c2_local_x >> 1;
+wire [10:0] c2_sprite_y = c2_local_y >> 1;
 
 wire [CLOUD_W-1:0] cloud_sprite_line  = get_cloud_sprite_line(c1_sprite_y);
 wire [CLOUD_W-1:0] cloud_sprite_line2 = get_cloud_sprite_line(c2_sprite_y);
