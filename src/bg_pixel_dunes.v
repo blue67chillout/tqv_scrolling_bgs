@@ -43,16 +43,25 @@ endfunction
 wire [10:0] temp_x = pix_x + scroll_counter - MOUND_X0;
 wire [10:0] mound_x = (temp_x >= H_RES) ? (temp_x - H_RES) : temp_x;
 wire in_mound_region = (mound_x < MOUND_W);
-wire [5:0] mound_index = (mound_x < HALF_MOUND_W) ? mound_x : (MOUND_W-1 - mound_x);
-wire [2:0] mound_val = mound_lut_val(mound_index);
-wire [9:0] ground_y_for_x = in_mound_region ? (GROUND_Y - mound_val) : GROUND_Y;
+wire [10:0] mound_index_a = (mound_x < HALF_MOUND_W) ? mound_x : (MOUND_W-1 - mound_x);
+wire [4:0] mound_index = mound_index_a[4:0];
+wire [2:0] mound_val = mound_lut_val(mound_index); // function input already 5 bits
+wire [9:0] ground_y_for_x = in_mound_region ? (GROUND_Y - {{7{1'b0}}, mound_val}) : GROUND_Y;
 wire is_ground_line = (pix_y == ground_y_for_x);
 
 // ---- Ground Dots, Scrolling ----
 wire [10:0] scroll_x = pix_x + scroll_counter;
-wire [3:0] mod8  = (scroll_x>=16) ? (scroll_x-16) : (scroll_x>=8) ? (scroll_x-8) : scroll_x;
-wire [3:0] mod11 = (scroll_x>=22) ? (scroll_x-22) : (scroll_x>=11) ? (scroll_x-11) : scroll_x;
-wire [4:0] mod17 = (scroll_x>=34) ? (scroll_x-34) : (scroll_x>=17) ? (scroll_x-17) : scroll_x;
+wire [3:0] mod8  = (scroll_x>=16) ? (scroll_x - 11'd16)[3:0] :
+                   (scroll_x>=8)  ? (scroll_x - 11'd8)[3:0]  :
+                                    scroll_x[3:0];
+
+wire [3:0] mod11 = (scroll_x>=22) ? (scroll_x - 11'd22)[3:0] :
+                   (scroll_x>=11) ? (scroll_x - 11'd11)[3:0] :
+                                    scroll_x[3:0];
+
+wire [4:0] mod17 = (scroll_x>=34) ? (scroll_x - 11'd34)[4:0] :
+                   (scroll_x>=17) ? (scroll_x - 11'd17)[4:0] :
+                                    scroll_x[4:0];
 wire is_ground_dot =
      (pix_y > ground_y_for_x) && (pix_y <= ground_y_for_x + 8) &&
      ((mod8  == 2 && pix_y == ground_y_for_x+3)  ||
