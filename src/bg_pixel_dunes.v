@@ -122,8 +122,8 @@ wire [10:0] c1_sprite_y = c1_local_y >> 1;
 wire [10:0] c2_sprite_x = c2_local_x >> 1;
 wire [10:0] c2_sprite_y = c2_local_y >> 1;
 
-wire [CLOUD_W-1:0] cloud_sprite_line  = get_cloud_sprite_line(c1_sprite_y);
-wire [CLOUD_W-1:0] cloud_sprite_line2 = get_cloud_sprite_line(c2_sprite_y);
+wire [CLOUD_W-1:0] cloud_sprite_line  = get_cloud_sprite_line(c1_sprite_y[2:0]);
+wire [CLOUD_W-1:0] cloud_sprite_line2 = get_cloud_sprite_line(c2_sprite_y[2:0]);
 
 wire is_cloud1 = in_cloud1_box && cloud_sprite_line[CLOUD_W-1-c1_sprite_x];
 wire is_cloud2 = in_cloud2_box && cloud_sprite_line2[CLOUD_W-1-c2_sprite_x];
