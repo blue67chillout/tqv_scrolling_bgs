@@ -5,8 +5,8 @@ module bg_pixel_planets(
     input  wire        rst_n,
     input  wire        bg_en,
     input  wire        video_active,  // 1 = pixel is valid
-    input  wire [9:0]  pix_x,
-    input  wire [9:0]  pix_y,
+    input  wire [10:0]  pix_x,
+    input  wire [10:0]  pix_y,
     input  wire        vsync,
     output wire [1:0]  R,
     output wire [1:0]  G,
