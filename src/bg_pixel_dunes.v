@@ -51,17 +51,24 @@ wire is_ground_line = (pix_y == ground_y_for_x);
 
 // ---- Ground Dots, Scrolling ----
 wire [10:0] scroll_x = pix_x + scroll_counter;
-wire [3:0] mod8  = (scroll_x>=16) ? (scroll_x - 11'd16)[3:0] :
-                   (scroll_x>=8)  ? (scroll_x - 11'd8)[3:0]  :
-                                    scroll_x[3:0];
+wire [10:0] tmp16 = scroll_x - 11'd16;
+wire [10:0] tmp8  = scroll_x - 11'd8;
+wire [10:0] tmp22 = scroll_x - 11'd22;
+wire [10:0] tmp11 = scroll_x - 11'd11;
+wire [10:0] tmp34 = scroll_x - 11'd34;
+wire [10:0] tmp17 = scroll_x - 11'd17;
 
-wire [3:0] mod11 = (scroll_x>=22) ? (scroll_x - 11'd22)[3:0] :
-                   (scroll_x>=11) ? (scroll_x - 11'd11)[3:0] :
-                                    scroll_x[3:0];
+wire [3:0] mod8  = (scroll_x >= 16) ? tmp16[3:0] :
+                   (scroll_x >= 8)  ? tmp8[3:0]  :
+                                      scroll_x[3:0];
 
-wire [4:0] mod17 = (scroll_x>=34) ? (scroll_x - 11'd34)[4:0] :
-                   (scroll_x>=17) ? (scroll_x - 11'd17)[4:0] :
-                                    scroll_x[4:0];
+wire [3:0] mod11 = (scroll_x >= 22) ? tmp22[3:0] :
+                   (scroll_x >= 11) ? tmp11[3:0] :
+                                      scroll_x[3:0];
+
+wire [4:0] mod17 = (scroll_x >= 34) ? tmp34[4:0] :
+                   (scroll_x >= 17) ? tmp17[4:0] :
+                                      scroll_x[4:0];
 wire is_ground_dot =
      (pix_y > ground_y_for_x) && (pix_y <= ground_y_for_x + 8) &&
      ((mod8  == 2 && pix_y == ground_y_for_x+3)  ||
