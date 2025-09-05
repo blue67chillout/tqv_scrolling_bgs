@@ -20,7 +20,7 @@ localparam GROUND_Y = (DISPLAY_MODE == 0) ? 450 : 840 ,
                         HALF_MOUND_W = 32;
 
 // =================== Mound, Scrolling, and Clouds ===================
-reg [9:0] scroll_counter;
+reg [10:0] scroll_counter;
 always @(posedge vsync or negedge rst_n)
     if (!rst_n) scroll_counter <= 0;
     else        scroll_counter <= scroll_counter + 1;
