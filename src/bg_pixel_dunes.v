@@ -1,5 +1,4 @@
 module bg_pixel_dunes (
-    input  wire        clk,
     input  wire        rst_n,
     input  wire        bg_en,
     input  wire        video_active,  // 1 = pixel is valid

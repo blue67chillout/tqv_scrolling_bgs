@@ -15,8 +15,8 @@ module video_controller (
   input polarity;
   output reg hsync, vsync;
   output visible;
-  output reg [9:0] pix_x;
-  output reg [9:0] pix_y;
+  output reg [10:0] pix_x;
+  output reg [10:0] pix_y;
 
 // --- 1024x768 xGA Standard Parameters @ 65MHz ---
     parameter H_DISPLAY = 1024;   // visible area

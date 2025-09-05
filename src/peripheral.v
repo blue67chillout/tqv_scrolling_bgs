@@ -101,7 +101,6 @@ module tqvp_example (
     end
 
     bg_pixel_dunes bg1 (
-            .clk(clk),
             .rst_n(rst_n),
             .bg_en (bg1_en),
             .video_active(visible),
