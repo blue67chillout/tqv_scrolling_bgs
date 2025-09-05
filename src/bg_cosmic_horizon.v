@@ -196,10 +196,11 @@ assign is_star = star_accum;
     wire in_p2 = (p2_dist_sq <= p2_r_sq);
 
     reg [1:0] p2_red, p2_green, p2_blue;
-
+    reg [2:0] noise;
+    
     always @(*) begin
         if (in_p2) begin
-            reg [2:0] noise;
+            
             noise = (pix_x[7:5] ^ pix_y[6:4]) + (pix_x[4] ^ pix_y[5]);
 
             if (noise < 3) begin
@@ -290,10 +291,12 @@ assign is_star = star_accum;
 
     reg [1:0] p4_red, p4_green, p4_blue;
 
+    reg [2:0] noise4;
+    
     always @(*) begin
         if (in_p4) begin
         
-            reg [2:0] noise4;
+            
             noise4 = (pix_x[6:4] ^ pix_y[5:3]) + (pix_x[3] ^ pix_y[4]);
 
             if (noise4 < 7) begin
