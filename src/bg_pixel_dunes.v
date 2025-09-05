@@ -41,7 +41,7 @@ function [2:0] mound_lut_val;
 endfunction
 
 wire [10:0] temp_x = pix_x + scroll_counter - MOUND_X0;
-wire [9:0] mound_x = (temp_x >= H_RES) ? (temp_x - H_RES) : temp_x;
+wire [10:0] mound_x = (temp_x >= H_RES) ? (temp_x - H_RES) : temp_x;
 wire in_mound_region = (mound_x < MOUND_W);
 wire [5:0] mound_index = (mound_x < HALF_MOUND_W) ? mound_x : (MOUND_W-1 - mound_x);
 wire [2:0] mound_val = mound_lut_val(mound_index);
