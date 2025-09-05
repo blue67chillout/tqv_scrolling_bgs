@@ -154,7 +154,7 @@ module tqvp_example (
     // registers are being read.
 
     // Detect invalid enable combinations
-    wire multiple_enables = (bg1_en & bg2_en) ;
+    //wire multiple_enables = (bg1_en & bg2_en) ;
     //| (bg1_en & bg3_en) | (bg2_en & bg3_en);
 
     // Final color selection
@@ -177,22 +177,22 @@ module tqvp_example (
     assign G = (bg1_en)? bg1_G : 2'b0 ;
     assign B = (bg1_en)? bg1_B : 2'b0 ;
 
-    reg interrupt;
+    // reg interrupt;
 
-    always @(posedge clk) begin
-        if (!rst_n) begin
-            interrupt <= 0;
-        end
+    // always @(posedge clk) begin
+    //     if (!rst_n) begin
+    //         interrupt <= 0;
+    //     end
 
-        if (multiple_enables) begin
-            interrupt <= 1;
-        end else if (CTRL[4]) begin
-            interrupt <= 0;
-        end
+    //     if (multiple_enables) begin
+    //         interrupt <= 1;
+    //     end else if (CTRL[4]) begin
+    //         interrupt <= 0;
+    //     end
 
-    end
+    // end
 
-    assign user_interrupt = interrupt;
+    // assign user_interrupt = interrupt;
 
     assign uo_out = {vsync, hsync, B, G, R};
 
