@@ -10,14 +10,15 @@ module bg_pixel_dunes (
     output wire [1:0]  G,
     output wire [1:0]  B
 );
-    localparam DISPLAY_MODE = 1; // 0=640x480 (VGA), 1=1024x768 (XGA)
+    
+localparam DISPLAY_MODE = 1; // 0=640x480 (VGA), 1=1024x768 (XGA)
 
 localparam H_RES = (DISPLAY_MODE == 0) ? 640  : 1024;
 localparam V_RES = (DISPLAY_MODE == 0) ? 480  : 768;
 localparam GROUND_Y = (DISPLAY_MODE == 0) ? 450 : 840 ,
-               MOUND_X0 = 306,
-               MOUND_W = 64,
-               HALF_MOUND_W = 32;
+                        MOUND_X0 = 306,
+                        MOUND_W = 64,
+                        HALF_MOUND_W = 32;
 
 // =================== Mound, Scrolling, and Clouds ===================
 reg [9:0] scroll_counter;
@@ -113,7 +114,7 @@ wire is_cloud1 = in_cloud1_box && cloud_sprite_line[CLOUD_W-1-c1_sprite_x];
 wire is_cloud2 = in_cloud2_box && cloud_sprite_line2[CLOUD_W-1-c2_sprite_x];
 wire is_cloud  = is_cloud1 || is_cloud2;
 
-// =================== Stars (Spread for XGA, unrolled style) ===================
+// =================== Stars ===================
 
 localparam STAR_SIZE = 2;
 
@@ -153,12 +154,14 @@ localparam STAR_Y15 = (DISPLAY_MODE == 0) ? 285 : 456 ;
 
 
 // --- Star Twinkle ---
+
 reg star_toggle;
 always @(posedge vsync or negedge rst_n)
     if (!rst_n) star_toggle <= 0;
     else        star_toggle <= ~star_toggle;
 
-// --- Star 'Plus' Logic (fully expanded for 16 stars) ---
+// --- Star 'Plus' Logic ---
+
 wire is_star_plus_0  = (((pix_x == STAR_X0 ) && (pix_y >= (GROUND_Y-STAR_Y0 -STAR_SIZE) && pix_y <= (GROUND_Y-STAR_Y0 +STAR_SIZE))) ||
                         ((pix_y == (GROUND_Y-STAR_Y0 )) && (pix_x >= (STAR_X0 -STAR_SIZE) && pix_x <= (STAR_X0 +STAR_SIZE))));
 wire is_star_plus_1  = (((pix_x == STAR_X1 ) && (pix_y >= (GROUND_Y-STAR_Y1 -STAR_SIZE) && pix_y <= (GROUND_Y-STAR_Y1 +STAR_SIZE))) ||
@@ -197,7 +200,8 @@ wire is_star_plus = is_star_plus_0  || is_star_plus_1  || is_star_plus_2  || is_
                     is_star_plus_8  || is_star_plus_9  || is_star_plus_10 || is_star_plus_11 ||
                     is_star_plus_12 || is_star_plus_13 || is_star_plus_14 || is_star_plus_15 ;
 
-// --- Star 'Cross' Logic (fully expanded for 16 stars) ---
+// --- Star 'Cross' Logic ---
+
 wire is_star_cross_0  = (((pix_x-STAR_X0 ) == (pix_y-(GROUND_Y-STAR_Y0 )) && (pix_x >= STAR_X0 -STAR_SIZE && pix_x <= STAR_X0 +STAR_SIZE) && (pix_y >= (GROUND_Y-STAR_Y0 )-STAR_SIZE && pix_y <= (GROUND_Y-STAR_Y0 )+STAR_SIZE)) ||
                         ((pix_x-STAR_X0 ) ==-(pix_y-(GROUND_Y-STAR_Y0 )) && (pix_x >= STAR_X0 -STAR_SIZE && pix_x <= STAR_X0 +STAR_SIZE) && (pix_y >= (GROUND_Y-STAR_Y0 )-STAR_SIZE && pix_y <= (GROUND_Y-STAR_Y0 )+STAR_SIZE)));
 wire is_star_cross_1  = (((pix_x-STAR_X1 ) == (pix_y-(GROUND_Y-STAR_Y1 )) && (pix_x >= STAR_X1 -STAR_SIZE && pix_x <= STAR_X1 +STAR_SIZE) && (pix_y >= (GROUND_Y-STAR_Y1 )-STAR_SIZE && pix_y <= (GROUND_Y-STAR_Y1 )+STAR_SIZE)) ||
@@ -238,14 +242,15 @@ wire is_star_cross = is_star_cross_0  || is_star_cross_1  || is_star_cross_2  ||
 
 wire is_star = star_toggle ? is_star_plus : is_star_cross;
 
-    //---------------------- Final Output ------------------------------
-    assign R = (!video_active)                ? 2'b00 :
-               (is_ground_line  && bg_en)     ? 2'b11 :
-               (is_ground_dot   && bg_en)     ? 2'b11 :
-               (is_cloud        && bg_en)     ? 2'b11 :
-               (is_star         && bg_en)     ? 2'b11 :
-               2'b00;
-    assign G = R;
-    assign B = R;
+
+//---------------------- Final Output ------------------------------
+assign R = (!video_active)                ? 2'b00 :
+            (is_ground_line  && bg_en)     ? 2'b11 :
+            (is_ground_dot   && bg_en)     ? 2'b11 :
+            (is_cloud        && bg_en)     ? 2'b11 :
+            (is_star         && bg_en)     ? 2'b11 :
+            2'b00;
+assign G = R;
+assign B = R;
 
 endmodule

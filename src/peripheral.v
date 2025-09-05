@@ -109,8 +109,8 @@ module tqvp_example (
             .pix_y(pix_y),
             .vsync(vsync),
             .R(bg1_R),
-            .G(bg2_G),
-            .B(bg3_B)
+            .G(bg1_G),
+            .B(bg1_B)
         );
 
     // Address 0 reads the example data register.  
