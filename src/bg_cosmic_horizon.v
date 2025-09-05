@@ -13,7 +13,7 @@ module bg_pixel_planets(
     output wire [1:0]  B
 );
 
-  localparam DISPLAY_MODE = 0; // 0=640x480 (VGA), 1=1024x768 (XGA)
+  localparam DISPLAY_MODE = 1; // 0=640x480 (VGA), 1=1024x768 (XGA)
 
     localparam H_RES = (DISPLAY_MODE == 0) ? 640  : 1024;
     localparam V_RES = (DISPLAY_MODE == 0) ? 480  : 768;
