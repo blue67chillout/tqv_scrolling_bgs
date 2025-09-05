@@ -39,10 +39,7 @@ module bg_pixel_planets(
 localparam STAR_SIZE = 1;
 localparam NUM_STARS = 70;
 
-// ---------------------- Flattened STAR_X / STAR_Y for VGA ----------------------
-localparam NUM_STARS = 70;
-
-// Flattened star data
+// Flattened STAR_X / STAR_Y for VGA
 localparam [10*NUM_STARS-1:0] STAR_X_VGA_FLAT = {
     10'd230,10'd210,10'd190,10'd170,10'd150,10'd130,10'd110,10'd90,10'd70,10'd50,
     10'd220,10'd200,10'd180,10'd160,10'd140,10'd120,10'd100,10'd80,10'd60,10'd40,
@@ -63,7 +60,7 @@ localparam [10*NUM_STARS-1:0] STAR_Y_VGA_FLAT = {
     10'd142,10'd196,10'd374,10'd427,10'd302,10'd72,10'd196,10'd89,10'd552,10'd267
 };
 
-localparam [2*NUM_STARS-1:0] STAR_COLOR_FLAT = {
+localparam [2*NUM_STARS-1:0] STAR_COLOR_VGA_FLAT = {
     2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,
     2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,
     2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,
@@ -73,66 +70,81 @@ localparam [2*NUM_STARS-1:0] STAR_COLOR_FLAT = {
     2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0
 };
 
-// Output arrays as wires
+// Flattened STAR_X / STAR_Y for XGA
+localparam [10*NUM_STARS-1:0] STAR_X_XGA_FLAT = {
+    // fill with your XGA values, same style as above
+};
+
+localparam [10*NUM_STARS-1:0] STAR_Y_XGA_FLAT = {
+    // fill with your XGA values
+};
+
+localparam [2*NUM_STARS-1:0] STAR_COLOR_XGA_FLAT = {
+    // fill with your XGA colors
+};
+
+// Choose based on display mode
 wire [9:0] STAR_X [0:NUM_STARS-1];
 wire [9:0] STAR_Y [0:NUM_STARS-1];
 wire [1:0] STAR_COLOR [0:NUM_STARS-1];
 
 genvar i;
 generate
-    for (i = 0; i < NUM_STARS; i = i + 1) begin : STAR_ASSIGN
-        assign STAR_X[i]     = STAR_X_VGA_FLAT[i*10 +: 10];
-        assign STAR_Y[i]     = STAR_Y_VGA_FLAT[i*10 +: 10];
-        assign STAR_COLOR[i] = STAR_COLOR_FLAT[i*2 +: 2];
+    if (DISPLAY_MODE == 0) begin : VGA_MODE
+        for (i = 0; i < NUM_STARS; i = i + 1) begin : STAR_ASSIGN_VGA
+            assign STAR_X[i]     = STAR_X_VGA_FLAT[i*10 +: 10];
+            assign STAR_Y[i]     = STAR_Y_VGA_FLAT[i*10 +: 10];
+            assign STAR_COLOR[i] = STAR_COLOR_VGA_FLAT[i*2 +: 2];
+        end
+    end else begin : XGA_MODE
+        for (i = 0; i < NUM_STARS; i = i + 1) begin : STAR_ASSIGN_XGA
+            assign STAR_X[i]     = STAR_X_XGA_FLAT[i*10 +: 10];
+            assign STAR_Y[i]     = STAR_Y_XGA_FLAT[i*10 +: 10];
+            assign STAR_COLOR[i] = STAR_COLOR_XGA_FLAT[i*2 +: 2];
+        end
     end
 endgenerate
 
-    reg [2:0] twinkle_counter;
-    always @(posedge vsync) begin
-        twinkle_counter <= twinkle_counter + 1;
-    end
+// Star twinkle and scrolling
+reg [2:0] twinkle_counter;
+always @(posedge vsync) begin
+    twinkle_counter <= twinkle_counter + 1;
+end
 
+reg [9:0] star_scroll;
+always @(posedge vsync) begin
+    star_scroll <= star_scroll + 5;
+end
 
-    reg [9:0] star_scroll;
-    always @(posedge vsync) begin
-        star_scroll <= star_scroll + 5;  
-    end
+wire is_star;
+reg star_accum;
+reg [1:0] star_color_out;
+integer j;
+reg [9:0] sx;
+reg [9:0] sy;
 
+always @* begin
+    star_accum = 0;
+    star_color_out = 0;
+    for (j = 0; j < NUM_STARS; j = j + 1) begin
+        if (STAR_X[j] >= (star_scroll >> 1))
+            sx = STAR_X[j] - (star_scroll >> 1);
+        else
+            sx = STAR_X[j] + H_RES - (star_scroll >> 1);
 
-    wire is_star;
-    reg star_accum;
-    reg [1:0] star_color_out;
-    integer i;
+        sy = STAR_Y[j];
 
-
-    reg [9:0] sx;
-    reg [9:0] sy;
-
-    always @* begin
-        star_accum = 0;
-        star_color_out = 0;
-
-        for (i = 0; i < NUM_STARS; i = i + 1) begin
-            if (STAR_X[i] >= (star_scroll >> 1))
-                sx = STAR_X[i] - (star_scroll >> 1);
-            else
-                sx = STAR_X[i] + H_RES - (star_scroll >> 1);
-
-            sy = STAR_Y[i];
-
-            if ((pix_x >= sx - STAR_SIZE) && (pix_x <= sx + STAR_SIZE) &&
-                (pix_y >= sy - STAR_SIZE) && (pix_y <= sy + STAR_SIZE)) begin
-        
-                if (((i + twinkle_counter) % 8) != 0) begin
-                    star_accum = 1;
-                    star_color_out = STAR_COLOR[i];
-                end
+        if ((pix_x >= sx - STAR_SIZE) && (pix_x <= sx + STAR_SIZE) &&
+            (pix_y >= sy - STAR_SIZE) && (pix_y <= sy + STAR_SIZE)) begin
+            if (((j + twinkle_counter) % 8) != 0) begin
+                star_accum = 1;
+                star_color_out = STAR_COLOR[j];
             end
         end
     end
+end
 
-    assign is_star = star_accum;
-
+assign is_star = star_accum;
 
     //---------------------------Planet-1 (Hot, near sun)-----------------------------
 
