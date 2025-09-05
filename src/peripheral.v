@@ -31,56 +31,145 @@ module tqvp_example (
     output        user_interrupt  // Dedicated interrupt request for this peripheral
 );
 
-    // Implement a 32-bit read/write register at address 0
-    reg [31:0] example_data;
+    
+    reg [7:0] CTRL; // 0x0  | mode | bg1_en | bg2_en | bg3_en | unused(4)|
+
+    //----mode ---///
+    // 0 - configure 
+    // 1 - stream
+
     always @(posedge clk) begin
         if (!rst_n) begin
-            example_data <= 0;
+            CTRL <= 0;
         end else begin
-            if (address == 6'h0) begin
-                if (data_write_n != 2'b11)              example_data[7:0]   <= data_in[7:0];
-                if (data_write_n[1] != data_write_n[0]) example_data[15:8]  <= data_in[15:8];
-                if (data_write_n == 2'b10)              example_data[31:16] <= data_in[31:16];
+            if (address == 6'h0 && data_write_n == 2'b00) begin
+                CTRL <= data_in[7:0];
             end
         end
     end
 
-    // The bottom 8 bits of the stored data are added to ui_in and output to uo_out.
-    assign uo_out = example_data[7:0] + ui_in;
+
+    reg hsync;
+    reg vsync;
+    wire visible;
+    reg [9:0] pix_x;
+    reg [9:0] pix_y;
+    
+    wire [1:0]R,G,B ;
+
+    reg vga_en ;
+    
+    video_controller u_video_controller(
+        .clk      	(clk       ),
+        .reset    	(rst_n     ),
+        .enable     (vga_en    ),
+        .polarity 	(1'b1      ), // 0 = negative polarity (VGA, SVGA), 1 = positive polarity (XGA, SXGA)
+        .hsync    	(hsync     ),
+        .vsync    	(vsync     ),
+        .visible  	(visible   ),
+        .pix_x    	(pix_x     ),
+        .pix_y    	(pix_y     )
+    );
+    
+
+    wire [1:0] bg1_R, bg1_G, b1_B;
+    wire [1:0] bg2_R, bg2_G, b2_B;
+    wire [1:0] bg3_R, bg3_G, b3_B;
+
+    reg bg1_en, bg2_en, bg3_en;
+
+
+    always @(posedge clk) begin
+        if (!rst_n) begin
+            vga_en <= 0;
+            bg1_en <= 0;
+            bg2_en <= 0;
+            bg3_en <= 0;
+        end else begin
+            if (CTRL[0] == 1'b1) begin
+                vga_en <= 1'b1;
+                bg1_en <= CTRL[1];
+                bg2_en <= CTRL[2];
+                bg3_en <= CTRL[3];
+            end else begin
+                vga_en <= 1'b0;
+                bg1_en <= 1'b0;
+                bg2_en <= 1'b0;
+                bg3_en <= 1'b0;
+            end
+        end
+    end
+
+    bg_pixel_dunes bg1 (
+            .clk(clk),
+            .rst_n(rst_n),
+            .bg_en (bg1_en),
+            .video_active(visible),
+            .pix_x(pix_x),
+            .pix_y(pix_y),
+            .vsync(vsync),
+            .R(bg1_R),
+            .G(bg2_G),
+            .B(bg3_B)
+        );
 
     // Address 0 reads the example data register.  
     // Address 4 reads ui_in
     // All other addresses read 0.
-    assign data_out = (address == 6'h0) ? example_data :
-                      (address == 6'h4) ? {24'h0, ui_in} :
+    assign data_out = (address == 6'h0) ? {24'b0,CTRL} :
                       32'h0;
 
     // All reads complete in 1 clock
     assign data_ready = 1;
     
-    // User interrupt is generated on rising edge of ui_in[6], and cleared by writing a 1 to the low bit of address 8.
-    reg example_interrupt;
-    reg last_ui_in_6;
+    // // User interrupt is generated on rising edge of ui_in[6], and cleared by writing a 1 to the low bit of address 8.
+    // reg example_interrupt;
+    // reg last_ui_in_6;
 
-    always @(posedge clk) begin
-        if (!rst_n) begin
-            example_interrupt <= 0;
-        end
+    // always @(posedge clk) begin
+    //     if (!rst_n) begin
+    //         example_interrupt <= 0;
+    //     end
 
-        if (ui_in[6] && !last_ui_in_6) begin
-            example_interrupt <= 1;
-        end else if (address == 6'h8 && data_write_n != 2'b11 && data_in[0]) begin
-            example_interrupt <= 0;
-        end
+    //     if (ui_in[6] && !last_ui_in_6) begin
+    //         example_interrupt <= 1;
+    //     end else if (address == 6'h8 && data_write_n != 2'b11 && data_in[0]) begin
+    //         example_interrupt <= 0;
+    //     end
 
-        last_ui_in_6 <= ui_in[6];
-    end
+    //     last_ui_in_6 <= ui_in[6];
+    // end
 
-    assign user_interrupt = example_interrupt;
+    // assign user_interrupt = example_interrupt;
 
     // List all unused inputs to prevent warnings
     // data_read_n is unused as none of our behaviour depends on whether
     // registers are being read.
+
+    // Detect invalid enable combinations
+    wire multiple_enables = (bg1_en + bg2_en + bg3_en) > 1;
+
+    // Final color selection
+    assign R = (multiple_enables) ? 2'b00 :
+            (bg1_en) ? bg1_R :
+            (bg2_en) ? bg2_R :
+            (bg3_en) ? bg3_R : 2'b00;
+
+    assign G = (multiple_enables) ? 2'b00 :
+            (bg1_en) ? bg1_G :
+            (bg2_en) ? bg2_G :
+            (bg3_en) ? bg3_G : 2'b00;
+
+    assign B = (multiple_enables) ? 2'b00 :
+            (bg1_en) ? b1_B  :
+            (bg2_en) ? b2_B  :
+            (bg3_en) ? b3_B  : 2'b00;
+
+    //raise interrupt if misconfigured
+    assign user_interrupt = multiple_enables;
+
+    assign uo_out = {vsync, hsync, B, G, R};
+
     wire _unused = &{data_read_n, 1'b0};
 
 endmodule
