@@ -73,10 +73,11 @@ module tqvp_example (
     
 
     wire [1:0] bg1_R, bg1_G, bg1_B;
-    wire [1:0] bg2_R, bg2_G, bg2_B;
+    //wire [1:0] bg2_R, bg2_G, bg2_B;
     //wire [1:0] bg3_R, bg3_G, bg3_B;
 
-    reg bg1_en, bg2_en ;
+    reg bg1_en;
+    //bg2_en ;
     //, bg3_en;
 
 
@@ -84,18 +85,18 @@ module tqvp_example (
         if (!rst_n) begin
             vga_en <= 0;
             bg1_en <= 0;
-            bg2_en <= 0;
+           // bg2_en <= 0;
            // bg3_en <= 0;
         end else begin
             if (CTRL[0] == 1'b1) begin
                 vga_en <= 1'b1;
                 bg1_en <= CTRL[1];
-                bg2_en <= CTRL[2];
+              //  bg2_en <= CTRL[2];
              //   bg3_en <= CTRL[3];
             end else begin
                 vga_en <= 1'b0;
                 bg1_en <= 1'b0;
-                bg2_en <= 1'b0;
+            //    bg2_en <= 1'b0;
            //     bg3_en <= 1'b0;
             end
         end
@@ -126,18 +127,18 @@ module tqvp_example (
     //     .B            (bg2_B)
     // );
 
-     bg_pixel_mario bg3 (
-        .clk          (clk),
-        .rst_n        (rst_n),
-         .bg_en        (bg2_en),
-        .video_active (visible),
-        .pix_x        (pix_x),
-        .pix_y        (pix_y),
-        .vsync        (vsync),
-         .R            (bg2_R),
-         .G            (bg2_G),
-         .B            (bg2_B)
-    );
+    //  bg_pixel_mario bg3 (
+    //     .clk          (clk),
+    //     .rst_n        (rst_n),
+    //      .bg_en        (bg2_en),
+    //     .video_active (visible),
+    //     .pix_x        (pix_x),
+    //     .pix_y        (pix_y),
+    //     .vsync        (vsync),
+    //      .R            (bg2_R),
+    //      .G            (bg2_G),
+    //      .B            (bg2_B)
+    // );
     // Address 0 reads the example data register.  
     // Address 4 reads ui_in
     // All other addresses read 0.
@@ -157,20 +158,24 @@ module tqvp_example (
     //| (bg1_en & bg3_en) | (bg2_en & bg3_en);
 
     // Final color selection
-    assign R = (multiple_enables) ? 2'b00 :
-            (bg1_en) ? bg1_R :
-            (bg2_en) ? bg2_R : 2'b00;
-            //(bg3_en) ? bg3_R : 2'b00;
+    // assign R = (multiple_enables) ? 2'b00 :
+    //         (bg1_en) ? bg1_R :
+    //         (bg2_en) ? bg2_R : 2'b00;
+    //         //(bg3_en) ? bg3_R : 2'b00;
 
-    assign G = (multiple_enables) ? 2'b00 :
-            (bg1_en) ? bg1_G :
-            (bg2_en) ? bg2_G : 2'b00;
-            //(bg3_en) ? bg3_G : 2'b00;
+    // assign G = (multiple_enables) ? 2'b00 :
+    //         (bg1_en) ? bg1_G :
+    //         (bg2_en) ? bg2_G : 2'b00;
+    //         //(bg3_en) ? bg3_G : 2'b00;
 
-    assign B = (multiple_enables) ? 2'b00 :
-            (bg1_en) ? bg1_B  :
-            (bg2_en) ? bg2_B  : 2'b00;
+    // assign B = (multiple_enables) ? 2'b00 :
+    //         (bg1_en) ? bg1_B  :
+    //         (bg2_en) ? bg2_B  : 2'b00;
             //(bg3_en) ? bg3_B  : 2'b00;
+
+    assign R = (bg1_en)? bg1_R : 2'b0 ;
+    assign G = (bg1_en)? bg1_G : 2'b0 ;
+    assign B = (bg1_en)? bg1_B : 2'b0 ;
 
     reg interrupt;
 
