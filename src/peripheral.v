@@ -112,6 +112,31 @@ module tqvp_example (
             .B(bg1_B)
         );
 
+     bg_pixel_planets bg2 (
+        .clk          (clk),
+        .rst_n        (rst_n),
+        .bg_en        (bg2_en),
+        .video_active (visible),
+        .pix_x        (pix_x), // truncate from 11-bit
+        .pix_y        (pix_y),
+        .vsync        (vsync),
+        .R            (bg2_R),
+        .G            (bg2_G),
+        .B            (bg2_B)
+    );
+
+     bg_pixel_mario bg3 (
+        .clk          (clk),
+        .rst_n        (rst_n),
+        .bg_en        (bg3_en),
+        .video_active (visible),
+        .pix_x        (pix_x),
+        .pix_y        (pix_y),
+        .vsync        (vsync),
+        .R            (bg3_R),
+        .G            (bg3_G),
+        .B            (bg3_B)
+    );
     // Address 0 reads the example data register.  
     // Address 4 reads ui_in
     // All other addresses read 0.
