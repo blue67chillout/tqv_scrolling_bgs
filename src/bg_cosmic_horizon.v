@@ -54,88 +54,8 @@ module bg_pixel_planets(
     //     10'd142,10'd196,10'd374,10'd427,10'd302,10'd72,10'd196,10'd89,10'd552,10'd267
     // };
 
-    localparam [2*NUM_STARS-1:0] STAR_COLOR_FLAT = {
-        2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,
-        2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,
-        2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,
-        2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,
-        2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,
-        2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,
-        2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0
-    };
 
-    localparam [10*NUM_STARS-1:0] STAR_X_XGA_FLAT =
-        {10'd368,10'd336,10'd304,10'd272,10'd240,10'd208,10'd176,10'd144,10'd112,10'd80,
-        10'd352,10'd320,10'd288,10'd256,10'd224,10'd192,10'd160,10'd128,10'd96,10'd64,
-        10'd636,10'd459,10'd281,10'd139,10'd801,10'd659,10'd516,10'd374,10'd232,10'd89,
-        10'd548,10'd406,10'd264,10'd121,10'd924,10'd747,10'd569,10'd392,10'd214,10'd36,
-        10'd782,10'd569,10'd321,10'd179,10'd868,10'd726,10'd584,10'd441,10'd299,10'd156,
-        10'd712,10'd476,10'd284,10'd54,10'd979,10'd836,10'd659,10'd462,10'd249,10'd107,
-        10'd747,10'd552,10'd374,10'd142,10'd924,10'd729,10'd622,10'd427,10'd196,10'd72};
 
-    localparam [10*NUM_STARS-1:0] STAR_Y_XGA_FLAT =
-        {10'd496,10'd595,10'd152,10'd456,10'd288,10'd584,10'd488,10'd200,10'd520,10'd536,
-        10'd648,10'd640,10'd624,10'd608,10'd592,10'd576,10'd560,10'd464,10'd512,10'd528,
-        10'd587,10'd196,10'd462,10'd214,10'd409,10'd284,10'd516,10'd142,10'd392,10'd267,
-        10'd214,10'd441,10'd316,10'd72,10'd196,10'd462,10'd124,10'd374,10'd302,10'd72,
-        10'd552,10'd196,10'd427,10'd302,10'd72,10'd196,10'd552,10'd427,10'd196,10'd427,
-        10'd374,10'd107,10'd374,10'd249,10'd142,10'd89,10'd528,10'd512,10'd464,10'd560,
-        10'd576,10'd592,10'd608,10'd624,10'd640,10'd648,10'd536,10'd520,10'd200,10'd488};
-
-    // Choose based on display mode
-    wire [9:0] STAR_X [0:NUM_STARS-1];
-    wire [9:0] STAR_Y [0:NUM_STARS-1];
-    wire [1:0] STAR_COLOR [0:NUM_STARS-1];
-
-    genvar i;
-    generate
-            for (i = 0; i < NUM_STARS; i = i + 1) begin : STAR_ASSIGN_XGA
-                assign STAR_X[i]     = STAR_X_XGA_FLAT[i*10 +: 10];
-                assign STAR_Y[i]     = STAR_Y_XGA_FLAT[i*10 +: 10];
-                assign STAR_COLOR[i] = STAR_COLOR_FLAT[i*2 +: 2];
-            end
-    endgenerate
-
-    // Star twinkle and scrolling
-    reg [2:0] twinkle_counter;
-    always @(posedge vsync) begin
-        twinkle_counter <= twinkle_counter + 1;
-    end
-
-    reg [9:0] star_scroll;
-    always @(posedge vsync) begin
-        star_scroll <= star_scroll + 5;
-    end
-
-    wire is_star;
-    reg star_accum;
-    reg [1:0] star_color_out;
-    integer j;
-    reg [9:0] sx;
-    reg [9:0] sy;
-
-    always @* begin
-        star_accum = 0;
-        star_color_out = 0;
-        for (j = 0; j < NUM_STARS; j = j + 1) begin
-            if (STAR_X[j] >= (star_scroll >> 1))
-                sx = STAR_X[j] - (star_scroll >> 1);
-            else
-                sx = STAR_X[j] + H_RES - (star_scroll >> 1);
-
-            sy = STAR_Y[j];
-
-            if ((pix_x >= sx - STAR_SIZE) && (pix_x <= sx + STAR_SIZE) &&
-                (pix_y >= sy - STAR_SIZE) && (pix_y <= sy + STAR_SIZE)) begin
-                if (((j + twinkle_counter) % 8) != 0) begin
-                    star_accum = 1;
-                    star_color_out = STAR_COLOR[j];
-                end
-            end
-        end
-    end
-
-    assign is_star = star_accum;
 
     //---------------------------Planet-1 (Hot, near sun)-----------------------------
 
@@ -316,51 +236,18 @@ module bg_pixel_planets(
     wire in_sun_d2 = (sun_dist_sq <= sun_d2_r_sq) && (sun_dist_sq >sun_d1_r_sq); 
 
 
-    // -------------------- Foreground Planet --------------------
- 
-    localparam FG_X = H_RES/2;
-
-    localparam FG_Y_OFFSET =  1200;    
-    localparam FG_Y = V_RES + FG_Y_OFFSET; 
-    localparam FG_R = 200;        
-
-    wire [9:0] fg_dx = (pix_x > FG_X) ? (pix_x - FG_X) : (FG_X - pix_x);
-    wire [9:0] fg_dy = (pix_y > FG_Y) ? (pix_y - FG_Y) : (FG_Y - pix_y);
-    wire [25:0] fg_dist_sq = fg_dx * fg_dx + fg_dy * fg_dy;
-    wire [25:0] fg_r_sq    = FG_R * FG_R;
-
-    wire in_foreground = (fg_dist_sq <= fg_r_sq-10000);
-    wire in_edge = (fg_dist_sq>fg_r_sq-10000 &&fg_dist_sq<=fg_r_sq );
-
-    reg [1:0] fg_red, fg_green, fg_blue;
-
-    always @(*) begin
-        if (in_foreground) begin
-            fg_red   = 2'b01; 
-            fg_green = 2'b01;
-            fg_blue  = 2'b01;
-        end else begin
-            fg_red   = 2'b00;
-            fg_green = 2'b00;
-            fg_blue  = 2'b00;
-        end
-    end
+  
     // ---------------- Final Color Assignment ---------------------
     assign R = (!video_active)  ? 2'b00 :
             in_sun              ? 2'b11 : 
             in_sun_corona       ? 2'b11 :
-            in_foreground &&   (DISPLAY_MODE == 0)      ? fg_red:
-            in_edge &&   (DISPLAY_MODE == 0)            ? 2'b10:
-            
+           
             in_p1               ? p1_red:
             in_p2               ? p2_red:
             in_p3               ? p3_red:
             in_p4               ? p4_red:
 
-            is_star && (star_color_out == 0) ? 2'b11 : 
-            is_star && (star_color_out == 1) ? 2'b11 :   
-            is_star && (star_color_out == 2) ? 2'b01 : 
-            
+           
             in_sun_d1           ? 2'b01:
             in_sun_d2           ?2'b01:
             
