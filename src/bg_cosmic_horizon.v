@@ -123,62 +123,7 @@ module bg_pixel_planets(
         end
     end
 
-    // -----------------------------Planet-3 (Saturn) ---------------------------------------
-    localparam P3_X = 728;
-    localparam P3_Y = 544;
-    localparam P3_R = 88;
-
-    wire signed [11:0] dx3 = $signed(pix_x) - $signed(P3_X);
-    wire signed [11:0] dy3 = $signed(pix_y) - $signed(P3_Y);
-
-    wire [23:0] p3_dist_sq = (dx3*dx3) + (dy3*dy3);
-    wire [15:0] p3_r_sq    = P3_R * P3_R;
-    wire in_p3 = (p3_dist_sq <= p3_r_sq);
-
-
-    localparam RING_SLOPE_NUM = 1;  
-    localparam RING_SLOPE_DEN = 2;  
-
-    wire signed [23:0] u_scaled3 = (dx3*RING_SLOPE_DEN) + (dy3*RING_SLOPE_NUM);
-    wire signed [23:0] v_scaled3 = (dy3*RING_SLOPE_DEN) - (dx3*RING_SLOPE_NUM);
-
-    function automatic [23:0] abs24(input signed [23:0] s);
-        abs24 = (s < 0) ? -s : s;
-    endfunction
-
-    localparam integer RING3_LEN     = P3_R*4*RING_SLOPE_DEN; 
-    localparam integer RING3_THICK   = 2*RING_SLOPE_DEN;           
-    localparam integer RING3_OFFSET  = 10*RING_SLOPE_DEN;         
-
-    wire in_band3_0 = (abs24(v_scaled3)                 <= RING3_THICK) && (abs24(u_scaled3) <= RING3_LEN);
-    wire in_band3_1 = (abs24(v_scaled3 - RING3_OFFSET)  <= RING3_THICK) && (abs24(u_scaled3) <= RING3_LEN);
-    wire in_band3_2 = (abs24(v_scaled3 + RING3_OFFSET)  <= RING3_THICK) && (abs24(u_scaled3) <= RING3_LEN);
-
-    wire in_ring3_any = in_band3_0 | in_band3_1 | in_band3_2;
-
-
-    wire ring3_front = in_ring3_any && ( !in_p3 || (v_scaled3 < 0) );
-    wire ring3_back  = in_ring3_any && (  in_p3 && (v_scaled3 >= 0) );  
-
-    reg [1:0] p3_red, p3_green, p3_blue;
-
-    always @* begin
-        if (ring3_front) begin
-            
-            p3_red   = 2'b11; p3_green = 2'b11; p3_blue  = 2'b00;  
-        end else if (in_p3) begin
-            
-            p3_red   = 2'b10; p3_green = 2'b1; p3_blue  = 2'b0; 
-        end else if (ring3_back) begin
-            
-            p3_red   = 2'b01; p3_green = 2'b01; p3_blue  = 2'b01;
-        end else begin
-            
-            p3_red   = 2'b00; p3_green = 2'b00; p3_blue  = 2'b00;
-        end
-    end
-
-
+ 
 
     //----------------------------Planet-4 (Uranus)-----------------------------------------
 
@@ -244,7 +189,7 @@ module bg_pixel_planets(
            
             in_p1               ? p1_red:
             in_p2               ? p2_red:
-            in_p3               ? p3_red:
+           
             in_p4               ? p4_red:
 
            
