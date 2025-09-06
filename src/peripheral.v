@@ -101,7 +101,7 @@ module tqvp_example (
         end
     end
 
-    bg_pixel_mario bg1 (
+    bg_pixel_planets bg1 (
             .rst_n(rst_n),
             .bg_en (bg1_en),
             .video_active(visible),
