@@ -72,7 +72,7 @@ module tqvp_example (
     
 
     wire [1:0] bg1_R, bg1_G, bg1_B;
-    wire [1:0] bg2_R, bg2_G, bg2_B;
+    //wire [1:0] bg2_R, bg2_G, bg2_B;
     wire [1:0] bg3_R, bg3_G, bg3_B;
 
     reg bg1_en;
@@ -113,18 +113,18 @@ module tqvp_example (
             .B(bg1_B)
         );
 
-     bg_pixel_planets bg2 (
-        .clk          (clk),
-        .rst_n        (rst_n),
-        .bg_en        (bg2_en),
-        .video_active (visible),
-        .pix_x        (pix_x),
-        .pix_y        (pix_y),
-        .vsync        (vsync),
-        .R            (bg2_R),
-        .G            (bg2_G),
-        .B            (bg2_B)
-    );
+    //  bg_pixel_planets bg2 (
+    //     .clk          (clk),
+    //     .rst_n        (rst_n),
+    //     .bg_en        (bg2_en),
+    //     .video_active (visible),
+    //     .pix_x        (pix_x),
+    //     .pix_y        (pix_y),
+    //     .vsync        (vsync),
+    //     .R            (bg2_R),
+    //     .G            (bg2_G),
+    //     .B            (bg2_B)
+    // );
 
      bg_pixel_mario bg3 (
         .clk          (clk),
@@ -153,22 +153,22 @@ module tqvp_example (
     // registers are being read.
 
     // Detect invalid enable combinations
-    wire multiple_enables = (bg1_en & bg2_en) | (bg1_en & bg3_en) | (bg2_en & bg3_en);
-
+    //wire multiple_enables = (bg1_en & bg2_en) | (bg1_en & bg3_en) | (bg2_en & bg3_en);
+    wire multiple_enables = (bg1_en & bg3_en);
     //Final color selection
     assign R = (multiple_enables) ? 2'b00 :
             (bg1_en) ? bg1_R :
-            (bg2_en) ? bg2_R :
+            //(bg2_en) ? bg2_R :
             (bg3_en) ? bg3_R : 2'b00;
 
     assign G = (multiple_enables) ? 2'b00 :
             (bg1_en) ? bg1_G :
-            (bg2_en) ? bg2_G :
+            //(bg2_en) ? bg2_G :
             (bg3_en) ? bg3_G : 2'b00;
 
     assign B = (multiple_enables) ? 2'b00 :
             (bg1_en) ? bg1_B  :
-            (bg2_en) ? bg2_B  :
+            //(bg2_en) ? bg2_B  :
             (bg3_en) ? bg3_B  : 2'b00;
 
     // assign R = (bg1_en)? bg1_R : 2'b0 ;
