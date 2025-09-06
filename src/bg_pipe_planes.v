@@ -13,11 +13,11 @@ module bg_pixel_mario(
     output wire [1:0]  B
 );
 
-    localparam DISPLAY_MODE = 1; // 0=640x480 (VGA), 1=1024x768 (XGA)
+    //1024x768 (XGA)
 
-    localparam H_RES = (DISPLAY_MODE == 0) ? 640  : 1024;
-    localparam V_RES = (DISPLAY_MODE == 0) ? 480  : 768;
-    localparam GROUND_Y = (DISPLAY_MODE == 0) ? 450 : 840;
+    localparam H_RES = 1024;
+    localparam V_RES = 768;
+    localparam GROUND_Y = 840;
 
     //----------------------- Scrolling Counter -------------------------
     reg [9:0] scroll_counter;
@@ -47,10 +47,10 @@ module bg_pixel_mario(
         end
     endfunction
 
-    localparam C1_Y_OFFSET = (DISPLAY_MODE == 0) ? 250 : 400;
-    localparam C2_Y_OFFSET = (DISPLAY_MODE == 0) ? 280 : 448;
-    localparam C1_X_BASE   = (DISPLAY_MODE == 0) ? 140 : 280;
-    localparam C2_X_BASE   = (DISPLAY_MODE == 0) ? 340 : 640;
+    localparam C1_Y_OFFSET = 400;
+    localparam C2_Y_OFFSET = 448;
+    localparam C1_X_BASE   = 280;
+    localparam C2_X_BASE   = 640;
 
     localparam C1_Y = GROUND_Y - C1_Y_OFFSET;
     localparam C2_Y = GROUND_Y - C2_Y_OFFSET;
@@ -118,9 +118,9 @@ module bg_pixel_mario(
     localparam FBRICK_H = BRICK_H;
     localparam FBRICK_SCALE = BRICK_SCALE;
 
-    localparam FBRICK_X = (DISPLAY_MODE == 0) ? 150 : 240;
+    localparam FBRICK_X = 240;
 
-    localparam FBRICK_Y_OFFSET = (DISPLAY_MODE == 0) ? 120 : 192;
+    localparam FBRICK_Y_OFFSET = 192;
 
     localparam FBRICK_Y = GROUND_Y - FBRICK_Y_OFFSET;
 
@@ -142,7 +142,7 @@ module bg_pixel_mario(
     localparam BUSH_H     = 4;
     localparam BUSH_SCALE = 8;
 
-    localparam BUSH_X = (DISPLAY_MODE == 0) ? 240 : 384;
+    localparam BUSH_X = 384;
     localparam BUSH_Y = GROUND_Y - (BUSH_H * BUSH_SCALE);
 
     function [BUSH_W-1:0] get_bush_sprite_line;
@@ -171,9 +171,9 @@ module bg_pixel_mario(
     wire is_bush_fill   = bush_px;
 
     // ------------------------- Pipe ------------------------------
-    localparam PIPE_X      = (DISPLAY_MODE == 0) ? 520 : 832;
+    localparam PIPE_X      = 832;
 
-    localparam PIPE_Y_OFFSET = (DISPLAY_MODE == 0) ? 65 : 104;
+    localparam PIPE_Y_OFFSET = 104;
     localparam PIPE_Y      = GROUND_Y - PIPE_Y_OFFSET;
 
     localparam PIPE_W      = 64;
@@ -206,13 +206,13 @@ module bg_pixel_mario(
     wire is_pipe_fill = in_pipe_stem || in_pipe_cap;
 
     //------------------------------- Sun --------------------------------
-    localparam SUN_X_OFFSET = (DISPLAY_MODE == 0) ? 100 : 160;
+    localparam SUN_X_OFFSET = 160;
     localparam SUN_X = H_RES - SUN_X_OFFSET;
 
-    localparam SUN_Y_OFFSET = (DISPLAY_MODE == 0) ? 80 : 128;
+    localparam SUN_Y_OFFSET = 128;
     localparam SUN_Y = SUN_Y_OFFSET;
 
-    localparam SUN_R = (DISPLAY_MODE == 0) ? 30 : 48;
+    localparam SUN_R = 48;
 
     wire signed [11:0] dx = pix_x - SUN_X;
     wire signed [11:0] dy = pix_y - SUN_Y;
@@ -225,8 +225,8 @@ module bg_pixel_mario(
 
     wire groud_brick_bg = (pix_y >= GROUND_Y);
 
-    localparam FLOAT_BRICK_Y_OFFSET = (DISPLAY_MODE == 0) ? 5 : 8; 
-    localparam FLOAT_BRICK_X_OFFSET = (DISPLAY_MODE == 0) ? 5 : 8; 
+    localparam FLOAT_BRICK_Y_OFFSET = 5; 
+    localparam FLOAT_BRICK_X_OFFSET = 5; 
 
     wire floating_brick_bg = ((pix_y >= FBRICK_Y) && (pix_y <= FBRICK_Y + 4*FBRICK_H - FLOAT_BRICK_Y_OFFSET) 
                             && (pix_x >= FBRICK_X) && (pix_x <= FBRICK_X - FLOAT_BRICK_X_OFFSET + 20*FBRICK_W));

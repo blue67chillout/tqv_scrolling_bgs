@@ -10,11 +10,11 @@ module bg_pixel_dunes (
     output wire [1:0]  B
 );
     
-localparam DISPLAY_MODE = 1; // 0=640x480 (VGA), 1=1024x768 (XGA)
+// 1024x768 (XGA)
 
-localparam H_RES = (DISPLAY_MODE == 0) ? 640  : 1024;
-localparam V_RES = (DISPLAY_MODE == 0) ? 480  : 768;
-localparam GROUND_Y = (DISPLAY_MODE == 0) ? 450 : 840 ,
+localparam H_RES = 1024;
+localparam V_RES = 768;
+localparam GROUND_Y = 840 ,
                         MOUND_X0 = 306,
                         MOUND_W = 64,
                         HALF_MOUND_W = 32;
@@ -95,10 +95,10 @@ function [CLOUD_W-1:0] get_cloud_sprite_line;
     end
 endfunction
 
-localparam C1_Y_OFFSET = (DISPLAY_MODE == 0) ? 260 : 416;
-localparam C2_Y_OFFSET = (DISPLAY_MODE == 0) ? 300 : 480;
-localparam C1_X_BASE   = (DISPLAY_MODE == 0) ? 140 : 280;
-localparam C2_X_BASE   = (DISPLAY_MODE == 0) ? 340 : 640;
+localparam C1_Y_OFFSET = 416;
+localparam C2_Y_OFFSET = 480;
+localparam C1_X_BASE   = 280;
+localparam C2_X_BASE   = 640;
 
 localparam C1_Y = GROUND_Y - C1_Y_OFFSET;
 localparam C2_Y = GROUND_Y - C2_Y_OFFSET;
@@ -134,38 +134,38 @@ wire is_cloud  = is_cloud1 || is_cloud2;
 localparam STAR_SIZE = 2;
 
 
-localparam STAR_X0  = (DISPLAY_MODE == 0) ?  27 :  43 ;
-localparam STAR_Y0  = (DISPLAY_MODE == 0) ? 300 : 480 ;
-localparam STAR_X1  = (DISPLAY_MODE == 0) ? 110 : 176 ;
-localparam STAR_Y1  = (DISPLAY_MODE == 0) ? 300 : 480 ;
-localparam STAR_X2  = (DISPLAY_MODE == 0) ? 154 : 246 ;
-localparam STAR_Y2  = (DISPLAY_MODE == 0) ? 275 : 440 ;
-localparam STAR_X3  = (DISPLAY_MODE == 0) ? 205 : 328 ;
-localparam STAR_Y3  = (DISPLAY_MODE == 0) ? 265 : 424 ;
-localparam STAR_X4  = (DISPLAY_MODE == 0) ? 270 : 432 ;
-localparam STAR_Y4  = (DISPLAY_MODE == 0) ? 255 : 408 ;
-localparam STAR_X5  = (DISPLAY_MODE == 0) ? 302 : 483 ;
-localparam STAR_Y5  = (DISPLAY_MODE == 0) ? 245 : 392 ;
-localparam STAR_X6  = (DISPLAY_MODE == 0) ? 420 : 672 ;
-localparam STAR_Y6  = (DISPLAY_MODE == 0) ? 235 : 376 ;
-localparam STAR_X7  = (DISPLAY_MODE == 0) ? 396 : 634 ;
-localparam STAR_Y7  = (DISPLAY_MODE == 0) ? 220 : 352 ;
-localparam STAR_X8  = (DISPLAY_MODE == 0) ? 100 : 160 ;
-localparam STAR_Y8  = (DISPLAY_MODE == 0) ? 355 : 568 ;
-localparam STAR_X9  = (DISPLAY_MODE == 0) ? 130 : 208 ;
-localparam STAR_Y9  = (DISPLAY_MODE == 0) ? 345 : 552 ;
-localparam STAR_X10 = (DISPLAY_MODE == 0) ? 250 : 400 ;
-localparam STAR_Y10 = (DISPLAY_MODE == 0) ? 335 : 536 ;
-localparam STAR_X11 = (DISPLAY_MODE == 0) ? 360 : 576 ;
-localparam STAR_Y11 = (DISPLAY_MODE == 0) ? 325 : 520 ;
-localparam STAR_X12 = (DISPLAY_MODE == 0) ? 390 : 624 ;
-localparam STAR_Y12 = (DISPLAY_MODE == 0) ? 315 : 504 ;
-localparam STAR_X13 = (DISPLAY_MODE == 0) ? 480 : 768 ;
-localparam STAR_Y13 = (DISPLAY_MODE == 0) ? 345 : 552 ;
-localparam STAR_X14 = (DISPLAY_MODE == 0) ? 530 : 848 ;
-localparam STAR_Y14 = (DISPLAY_MODE == 0) ? 295 : 472 ;
-localparam STAR_X15 = (DISPLAY_MODE == 0) ? 605 : 968 ;
-localparam STAR_Y15 = (DISPLAY_MODE == 0) ? 285 : 456 ;
+localparam STAR_X0  = 43 ;
+localparam STAR_Y0  = 480 ;
+localparam STAR_X1  = 176 ;
+localparam STAR_Y1  = 480 ;
+localparam STAR_X2  = 246 ;
+localparam STAR_Y2  = 440 ;
+localparam STAR_X3  = 328 ;
+localparam STAR_Y3  = 424 ;
+localparam STAR_X4  = 432 ;
+localparam STAR_Y4  = 408 ;
+localparam STAR_X5  = 483 ;
+localparam STAR_Y5  = 392 ;
+localparam STAR_X6  = 672 ;
+localparam STAR_Y6  = 376 ;
+localparam STAR_X7  = 634 ;
+localparam STAR_Y7  = 352 ;
+localparam STAR_X8  = 160 ;
+localparam STAR_Y8  = 568 ;
+localparam STAR_X9  = 208 ;
+localparam STAR_Y9  = 552 ;
+localparam STAR_X10 = 400 ;
+localparam STAR_Y10 = 536 ;
+localparam STAR_X11 = 576 ;
+localparam STAR_Y11 = 520 ;
+localparam STAR_X12 = 624 ;
+localparam STAR_Y12 = 504 ;
+localparam STAR_X13 = 768 ;
+localparam STAR_Y13 = 552 ;
+localparam STAR_X14 = 848 ;
+localparam STAR_Y14 = 472 ;
+localparam STAR_X15 = 968 ;
+localparam STAR_Y15 = 456 ;
 
 
 // --- Star Twinkle ---

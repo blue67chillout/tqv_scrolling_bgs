@@ -13,11 +13,11 @@ module bg_pixel_planets(
     output wire [1:0]  B
 );
 
-  localparam DISPLAY_MODE = 1; // 0=640x480 (VGA), 1=1024x768 (XGA)
+    localparam DISPLAY_MODE = 1; // 0=640x480 (VGA), 1=1024x768 (XGA)
 
-    localparam H_RES = (DISPLAY_MODE == 0) ? 640  : 1024;
-    localparam V_RES = (DISPLAY_MODE == 0) ? 480  : 768;
-    localparam GROUND_Y = (DISPLAY_MODE == 0) ? 450 : 840;
+    localparam H_RES = 1024;
+    localparam V_RES = 768;
+    localparam GROUND_Y = 840;
 
     //----------------------- Scrolling Counter -------------------------
     reg [9:0] scroll_counter;
@@ -33,123 +33,115 @@ module bg_pixel_planets(
     localparam NUM_STARS = 70;  
 
 
-// Flattened STAR_X / STAR_Y for VGA
-localparam [10*NUM_STARS-1:0] STAR_X_VGA_FLAT = {
-    10'd230,10'd210,10'd190,10'd170,10'd150,10'd130,10'd110,10'd90,10'd70,10'd50,
-    10'd220,10'd200,10'd180,10'd160,10'd140,10'd120,10'd100,10'd80,10'd60,10'd40,
-    10'd398,10'd287,10'd176,10'd87,10'd501,10'd412,10'd323,10'd234,10'd145,10'd56,
-    10'd343,10'd254,10'd165,10'd76,10'd578,10'd467,10'd356,10'd245,10'd134,10'd23,
-    10'd489,10'd356,10'd201,10'd112,10'd543,10'd454,10'd365,10'd276,10'd187,10'd98,
-    10'd445,10'd298,10'd178,10'd34,10'd612,10'd523,10'd412,10'd289,10'd156,10'd67,
-    10'd467,10'd345,10'd234,10'd89,10'd578,10'd456,10'd389,10'd267,10'd123,10'd45
-};
+    // Flattened STAR_X / STAR_Y for VGA
+    // localparam [10*NUM_STARS-1:0] STAR_X_VGA_FLAT = {
+    //     10'd230,10'd210,10'd190,10'd170,10'd150,10'd130,10'd110,10'd90,10'd70,10'd50,
+    //     10'd220,10'd200,10'd180,10'd160,10'd140,10'd120,10'd100,10'd80,10'd60,10'd40,
+    //     10'd398,10'd287,10'd176,10'd87,10'd501,10'd412,10'd323,10'd234,10'd145,10'd56,
+    //     10'd343,10'd254,10'd165,10'd76,10'd578,10'd467,10'd356,10'd245,10'd134,10'd23,
+    //     10'd489,10'd356,10'd201,10'd112,10'd543,10'd454,10'd365,10'd276,10'd187,10'd98,
+    //     10'd445,10'd298,10'd178,10'd34,10'd612,10'd523,10'd412,10'd289,10'd156,10'd67,
+    //     10'd467,10'd345,10'd234,10'd89,10'd578,10'd456,10'd389,10'd267,10'd123,10'd45
+    // };
 
-localparam [10*NUM_STARS-1:0] STAR_Y_VGA_FLAT = {
-    10'd496,10'd595,10'd152,10'd456,10'd288,10'd584,10'd488,10'd200,10'd520,10'd536,
-    10'd648,10'd640,10'd624,10'd608,10'd592,10'd576,10'd560,10'd464,10'd512,10'd528,
-    10'd587,10'd196,10'd462,10'd214,10'd409,10'd284,10'd516,10'd142,10'd392,10'd267,
-    10'd214,10'd441,10'd316,10'd72,10'd196,10'd462,10'd214,10'd441,10'd316,10'd72,
-    10'd587,10'd196,10'd462,10'd249,10'd124,10'd374,10'd302,10'd427,10'd72,10'd444,
-    10'd214,10'd321,10'd124,10'd552,10'd196,10'd427,10'd302,10'd72,10'd374,10'd427,
-    10'd142,10'd196,10'd374,10'd427,10'd302,10'd72,10'd196,10'd89,10'd552,10'd267
-};
+    // localparam [10*NUM_STARS-1:0] STAR_Y_VGA_FLAT = {
+    //     10'd496,10'd595,10'd152,10'd456,10'd288,10'd584,10'd488,10'd200,10'd520,10'd536,
+    //     10'd648,10'd640,10'd624,10'd608,10'd592,10'd576,10'd560,10'd464,10'd512,10'd528,
+    //     10'd587,10'd196,10'd462,10'd214,10'd409,10'd284,10'd516,10'd142,10'd392,10'd267,
+    //     10'd214,10'd441,10'd316,10'd72,10'd196,10'd462,10'd214,10'd441,10'd316,10'd72,
+    //     10'd587,10'd196,10'd462,10'd249,10'd124,10'd374,10'd302,10'd427,10'd72,10'd444,
+    //     10'd214,10'd321,10'd124,10'd552,10'd196,10'd427,10'd302,10'd72,10'd374,10'd427,
+    //     10'd142,10'd196,10'd374,10'd427,10'd302,10'd72,10'd196,10'd89,10'd552,10'd267
+    // };
 
-localparam [2*NUM_STARS-1:0] STAR_COLOR_FLAT = {
-    2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,
-    2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,
-    2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,
-    2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,
-    2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,
-    2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,
-    2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0
-};
+    localparam [2*NUM_STARS-1:0] STAR_COLOR_FLAT = {
+        2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,
+        2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,2'd2,2'd1,2'd0,
+        2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,
+        2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,
+        2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,
+        2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,
+        2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0,2'd1,2'd2,2'd0
+    };
 
-localparam [10*NUM_STARS-1:0] STAR_X_XGA_FLAT =
-    {10'd368,10'd336,10'd304,10'd272,10'd240,10'd208,10'd176,10'd144,10'd112,10'd80,
-     10'd352,10'd320,10'd288,10'd256,10'd224,10'd192,10'd160,10'd128,10'd96,10'd64,
-     10'd636,10'd459,10'd281,10'd139,10'd801,10'd659,10'd516,10'd374,10'd232,10'd89,
-     10'd548,10'd406,10'd264,10'd121,10'd924,10'd747,10'd569,10'd392,10'd214,10'd36,
-     10'd782,10'd569,10'd321,10'd179,10'd868,10'd726,10'd584,10'd441,10'd299,10'd156,
-     10'd712,10'd476,10'd284,10'd54,10'd979,10'd836,10'd659,10'd462,10'd249,10'd107,
-     10'd747,10'd552,10'd374,10'd142,10'd924,10'd729,10'd622,10'd427,10'd196,10'd72};
+    localparam [10*NUM_STARS-1:0] STAR_X_XGA_FLAT =
+        {10'd368,10'd336,10'd304,10'd272,10'd240,10'd208,10'd176,10'd144,10'd112,10'd80,
+        10'd352,10'd320,10'd288,10'd256,10'd224,10'd192,10'd160,10'd128,10'd96,10'd64,
+        10'd636,10'd459,10'd281,10'd139,10'd801,10'd659,10'd516,10'd374,10'd232,10'd89,
+        10'd548,10'd406,10'd264,10'd121,10'd924,10'd747,10'd569,10'd392,10'd214,10'd36,
+        10'd782,10'd569,10'd321,10'd179,10'd868,10'd726,10'd584,10'd441,10'd299,10'd156,
+        10'd712,10'd476,10'd284,10'd54,10'd979,10'd836,10'd659,10'd462,10'd249,10'd107,
+        10'd747,10'd552,10'd374,10'd142,10'd924,10'd729,10'd622,10'd427,10'd196,10'd72};
 
-localparam [10*NUM_STARS-1:0] STAR_Y_XGA_FLAT =
-    {10'd496,10'd595,10'd152,10'd456,10'd288,10'd584,10'd488,10'd200,10'd520,10'd536,
-     10'd648,10'd640,10'd624,10'd608,10'd592,10'd576,10'd560,10'd464,10'd512,10'd528,
-     10'd587,10'd196,10'd462,10'd214,10'd409,10'd284,10'd516,10'd142,10'd392,10'd267,
-     10'd214,10'd441,10'd316,10'd72,10'd196,10'd462,10'd124,10'd374,10'd302,10'd72,
-     10'd552,10'd196,10'd427,10'd302,10'd72,10'd196,10'd552,10'd427,10'd196,10'd427,
-     10'd374,10'd107,10'd374,10'd249,10'd142,10'd89,10'd528,10'd512,10'd464,10'd560,
-     10'd576,10'd592,10'd608,10'd624,10'd640,10'd648,10'd536,10'd520,10'd200,10'd488};
+    localparam [10*NUM_STARS-1:0] STAR_Y_XGA_FLAT =
+        {10'd496,10'd595,10'd152,10'd456,10'd288,10'd584,10'd488,10'd200,10'd520,10'd536,
+        10'd648,10'd640,10'd624,10'd608,10'd592,10'd576,10'd560,10'd464,10'd512,10'd528,
+        10'd587,10'd196,10'd462,10'd214,10'd409,10'd284,10'd516,10'd142,10'd392,10'd267,
+        10'd214,10'd441,10'd316,10'd72,10'd196,10'd462,10'd124,10'd374,10'd302,10'd72,
+        10'd552,10'd196,10'd427,10'd302,10'd72,10'd196,10'd552,10'd427,10'd196,10'd427,
+        10'd374,10'd107,10'd374,10'd249,10'd142,10'd89,10'd528,10'd512,10'd464,10'd560,
+        10'd576,10'd592,10'd608,10'd624,10'd640,10'd648,10'd536,10'd520,10'd200,10'd488};
 
-// Choose based on display mode
-wire [9:0] STAR_X [0:NUM_STARS-1];
-wire [9:0] STAR_Y [0:NUM_STARS-1];
-wire [1:0] STAR_COLOR [0:NUM_STARS-1];
+    // Choose based on display mode
+    wire [9:0] STAR_X [0:NUM_STARS-1];
+    wire [9:0] STAR_Y [0:NUM_STARS-1];
+    wire [1:0] STAR_COLOR [0:NUM_STARS-1];
 
-genvar i;
-generate
-    if (DISPLAY_MODE == 0) begin : VGA_MODE
-        for (i = 0; i < NUM_STARS; i = i + 1) begin : STAR_ASSIGN_VGA
-            assign STAR_X[i]     = STAR_X_VGA_FLAT[i*10 +: 10];
-            assign STAR_Y[i]     = STAR_Y_VGA_FLAT[i*10 +: 10];
-            assign STAR_COLOR[i] = STAR_COLOR_FLAT[i*2 +: 2];
-        end
-    end else begin : XGA_MODE
-        for (i = 0; i < NUM_STARS; i = i + 1) begin : STAR_ASSIGN_XGA
-            assign STAR_X[i]     = STAR_X_XGA_FLAT[i*10 +: 10];
-            assign STAR_Y[i]     = STAR_Y_XGA_FLAT[i*10 +: 10];
-            assign STAR_COLOR[i] = STAR_COLOR_FLAT[i*2 +: 2];
-        end
+    genvar i;
+    generate
+            for (i = 0; i < NUM_STARS; i = i + 1) begin : STAR_ASSIGN_XGA
+                assign STAR_X[i]     = STAR_X_XGA_FLAT[i*10 +: 10];
+                assign STAR_Y[i]     = STAR_Y_XGA_FLAT[i*10 +: 10];
+                assign STAR_COLOR[i] = STAR_COLOR_FLAT[i*2 +: 2];
+            end
+    endgenerate
+
+    // Star twinkle and scrolling
+    reg [2:0] twinkle_counter;
+    always @(posedge vsync) begin
+        twinkle_counter <= twinkle_counter + 1;
     end
-endgenerate
 
-// Star twinkle and scrolling
-reg [2:0] twinkle_counter;
-always @(posedge vsync) begin
-    twinkle_counter <= twinkle_counter + 1;
-end
+    reg [9:0] star_scroll;
+    always @(posedge vsync) begin
+        star_scroll <= star_scroll + 5;
+    end
 
-reg [9:0] star_scroll;
-always @(posedge vsync) begin
-    star_scroll <= star_scroll + 5;
-end
+    wire is_star;
+    reg star_accum;
+    reg [1:0] star_color_out;
+    integer j;
+    reg [9:0] sx;
+    reg [9:0] sy;
 
-wire is_star;
-reg star_accum;
-reg [1:0] star_color_out;
-integer j;
-reg [9:0] sx;
-reg [9:0] sy;
+    always @* begin
+        star_accum = 0;
+        star_color_out = 0;
+        for (j = 0; j < NUM_STARS; j = j + 1) begin
+            if (STAR_X[j] >= (star_scroll >> 1))
+                sx = STAR_X[j] - (star_scroll >> 1);
+            else
+                sx = STAR_X[j] + H_RES - (star_scroll >> 1);
 
-always @* begin
-    star_accum = 0;
-    star_color_out = 0;
-    for (j = 0; j < NUM_STARS; j = j + 1) begin
-        if (STAR_X[j] >= (star_scroll >> 1))
-            sx = STAR_X[j] - (star_scroll >> 1);
-        else
-            sx = STAR_X[j] + H_RES - (star_scroll >> 1);
+            sy = STAR_Y[j];
 
-        sy = STAR_Y[j];
-
-        if ((pix_x >= sx - STAR_SIZE) && (pix_x <= sx + STAR_SIZE) &&
-            (pix_y >= sy - STAR_SIZE) && (pix_y <= sy + STAR_SIZE)) begin
-            if (((j + twinkle_counter) % 8) != 0) begin
-                star_accum = 1;
-                star_color_out = STAR_COLOR[j];
+            if ((pix_x >= sx - STAR_SIZE) && (pix_x <= sx + STAR_SIZE) &&
+                (pix_y >= sy - STAR_SIZE) && (pix_y <= sy + STAR_SIZE)) begin
+                if (((j + twinkle_counter) % 8) != 0) begin
+                    star_accum = 1;
+                    star_color_out = STAR_COLOR[j];
+                end
             end
         end
     end
-end
 
-assign is_star = star_accum;
+    assign is_star = star_accum;
 
     //---------------------------Planet-1 (Hot, near sun)-----------------------------
 
-    localparam P1_X = (DISPLAY_MODE == 0) ? 120 : 192;
-    localparam P1_Y = (DISPLAY_MODE == 0) ? 200 : 320;
-    localparam P1_R = (DISPLAY_MODE == 0) ? 30 : 48;
+    localparam P1_X = 192;
+    localparam P1_Y = 320;
+    localparam P1_R = 48;
 
     wire signed [11:0] p1x = pix_x - P1_X;
     wire signed [11:0] p1y = pix_y - P1_Y;
@@ -184,9 +176,9 @@ assign is_star = star_accum;
 
     //------------------------------------------Planet-2 (Earth)-----------------------------------------
 
-    localparam P2_X = (DISPLAY_MODE == 0) ? 300 : 480;
-    localparam P2_Y = (DISPLAY_MODE == 0) ? 140 : 224;
-    localparam P2_R = (DISPLAY_MODE == 0) ? 40 : 64;
+    localparam P2_X = 480;
+    localparam P2_Y = 224;
+    localparam P2_R = 64;
 
     wire [9:0] p2_dx = (pix_x > P2_X) ? (pix_x - P2_X) : (P2_X - pix_x);
     wire [9:0] p2_dy = (pix_y > P2_Y) ? (pix_y - P2_Y) : (P2_Y - pix_y);
@@ -217,9 +209,9 @@ assign is_star = star_accum;
     end
 
     // -----------------------------Planet-3 (Saturn) ---------------------------------------
-    localparam P3_X = (DISPLAY_MODE == 0) ? 455 : 728;
-    localparam P3_Y = (DISPLAY_MODE == 0) ? 340 : 544;
-    localparam P3_R = (DISPLAY_MODE == 0) ? 55 : 88;
+    localparam P3_X = 728;
+    localparam P3_Y = 544;
+    localparam P3_R = 88;
 
     wire signed [11:0] dx3 = $signed(pix_x) - $signed(P3_X);
     wire signed [11:0] dy3 = $signed(pix_y) - $signed(P3_Y);
@@ -275,9 +267,9 @@ assign is_star = star_accum;
 
     //----------------------------Planet-4 (Uranus)-----------------------------------------
 
-    localparam P4_X = (DISPLAY_MODE == 0) ? 580 : 928;
-    localparam P4_Y = (DISPLAY_MODE == 0) ? 80 : 128;
-    localparam P4_R = (DISPLAY_MODE == 0) ? 40 : 64;
+    localparam P4_X = 928;
+    localparam P4_Y = 128;
+    localparam P4_R = 64;
 
     wire [9:0] p4_dx = (pix_x > P4_X) ? (pix_x - P4_X) : (P4_X - pix_x);
     wire [9:0] p4_dy = (pix_y > P4_Y) ? (pix_y - P4_Y) : (P4_Y - pix_y);
@@ -311,9 +303,9 @@ assign is_star = star_accum;
 
 
     //--------------------------------Sun------------------------------------
-    localparam SUN_X = (DISPLAY_MODE == 0) ? 50 : 80;
-    localparam SUN_Y = (DISPLAY_MODE == 0) ? 50 : 80;
-    localparam SUN_R = (DISPLAY_MODE == 0) ? 70 : 112;
+    localparam SUN_X = 80;
+    localparam SUN_Y = 80;
+    localparam SUN_R = 112;
 
     wire [9:0] sun_dx = (pix_x > SUN_X) ? (pix_x - SUN_X) : (SUN_X - pix_x);
     wire [9:0] sun_dy = (pix_y > SUN_Y) ? (pix_y - SUN_Y) : (SUN_Y - pix_y);
@@ -322,9 +314,9 @@ assign is_star = star_accum;
 
     wire in_sun = (sun_dist_sq <= sun_r_sq);
 
-    localparam SUN_CORONA_OFFSET = (DISPLAY_MODE == 0) ? 10 : 16;
-    localparam SUN_D1_R_OFFSET = (DISPLAY_MODE == 0) ? 60 : 96;
-    localparam SUN_D2_R_OFFSET = (DISPLAY_MODE == 0) ? 90 : 144;
+    localparam SUN_CORONA_OFFSET = 16;
+    localparam SUN_D1_R_OFFSET = 96;
+    localparam SUN_D2_R_OFFSET = 144;
 
     wire [15:0] sun_corona_r_sq = (SUN_R + SUN_CORONA_OFFSET) * (SUN_R + SUN_CORONA_OFFSET);
     wire in_sun_corona = (sun_dist_sq <= sun_corona_r_sq) && (sun_dist_sq > sun_r_sq);
@@ -340,9 +332,9 @@ assign is_star = star_accum;
  
     localparam FG_X = H_RES/2;
 
-    localparam FG_Y_OFFSET =  (DISPLAY_MODE == 0) ? 530 : 1200;    
+    localparam FG_Y_OFFSET =  1200;    
     localparam FG_Y = V_RES + FG_Y_OFFSET; 
-    localparam FG_R = (DISPLAY_MODE == 0) ? 620 : 200;        
+    localparam FG_R = 200;        
 
     wire [9:0] fg_dx = (pix_x > FG_X) ? (pix_x - FG_X) : (FG_X - pix_x);
     wire [9:0] fg_dy = (pix_y > FG_Y) ? (pix_y - FG_Y) : (FG_Y - pix_y);
@@ -370,7 +362,7 @@ assign is_star = star_accum;
             in_sun              ? 2'b11 : 
             in_sun_corona       ? 2'b10 :
             in_foreground &&   (DISPLAY_MODE == 0)      ? fg_red:
-            in_edge&&   (DISPLAY_MODE == 0)             ? 2'b10:
+            in_edge &&   (DISPLAY_MODE == 0)            ? 2'b10:
             
             in_p1               ? p1_red:
             in_p2               ? p2_red:
