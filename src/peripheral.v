@@ -129,14 +129,14 @@ module tqvp_example (
      bg_pixel_mario bg3 (
         .clk          (clk),
         .rst_n        (rst_n),
-         .bg_en        (bg2_en),
+         .bg_en        (bg3_en),
         .video_active (visible),
         .pix_x        (pix_x),
         .pix_y        (pix_y),
         .vsync        (vsync),
-         .R            (bg2_R),
-         .G            (bg2_G),
-         .B            (bg2_B)
+         .R            (bg3_R),
+         .G            (bg3_G),
+         .B            (bg3_B)
     );
     // Address 0 reads the example data register.  
     // Address 4 reads ui_in
@@ -155,7 +155,7 @@ module tqvp_example (
     // Detect invalid enable combinations
     wire multiple_enables = (bg1_en & bg2_en) | (bg1_en & bg3_en) | (bg2_en & bg3_en);
 
-    Final color selection
+    //Final color selection
     assign R = (multiple_enables) ? 2'b00 :
             (bg1_en) ? bg1_R :
             (bg2_en) ? bg2_R :
@@ -175,7 +175,7 @@ module tqvp_example (
     // assign G = (bg1_en)? bg1_G : 2'b0 ;
     // assign B = (bg1_en)? bg1_B : 2'b0 ;
 
-    wire multiple_enables = 1'b0 ; 
+    //wire multiple_enables = 1'b0 ; 
 
     reg interrupt;
 
