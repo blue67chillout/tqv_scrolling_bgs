@@ -360,7 +360,7 @@ module bg_pixel_planets(
     // ---------------- Final Color Assignment ---------------------
     assign R = (!video_active)  ? 2'b00 :
             in_sun              ? 2'b11 : 
-            in_sun_corona       ? 2'b10 :
+            in_sun_corona       ? 2'b11 :
             in_foreground &&   (DISPLAY_MODE == 0)      ? fg_red:
             in_edge &&   (DISPLAY_MODE == 0)            ? 2'b10:
             
@@ -378,47 +378,9 @@ module bg_pixel_planets(
             
             2'b00;
 
-    assign G = (!video_active)  ? 2'b00 :           
-            in_sun              ? 2'b10 :
-            in_sun_corona       ? 2'b01 :
+    assign G = R;
 
-            in_foreground &&   (DISPLAY_MODE == 0)      ? fg_green:
-            in_edge  &&   (DISPLAY_MODE == 0)          ? 2'b10:
-
-            in_p1               ? p1_green:
-            in_p2               ? p2_green:
-            in_p3               ? p3_green:
-            in_p4               ? p4_green:
-
-            is_star && (star_color_out == 0) ? 2'b11 : 
-            is_star && (star_color_out == 1) ? 2'b01 :  
-            is_star && (star_color_out == 2) ? 2'b10 :  
-                
-            in_sun_d1           ? 2'b00:
-            in_sun_d2           ? 2'b00:
-            
-            2'b00;
-
-    assign B = (!video_active)  ? 2'b00 :
-            in_sun              ? 2'b00 :
-            in_sun_corona       ? 2'b00 :
-
-            in_foreground &&   (DISPLAY_MODE == 0)    ? fg_blue:
-            in_edge   &&   (DISPLAY_MODE == 0)          ? 2'b10:
-
-            in_p1               ? p1_blue:
-            in_p2               ? p2_blue:
-            in_p3               ? p3_blue:
-            in_p4               ? p4_blue:
-
-            is_star && (star_color_out == 0) ? 2'b11 :  
-            is_star && (star_color_out == 1) ? 2'b00 :  
-            is_star && (star_color_out == 2) ? 2'b11 : 
-            
-            in_sun_d1           ? 2'b00:
-            in_sun_d2           ? 2'b01:
-            
-            2'b00;
+    assign B = R;
 
   
 endmodule
