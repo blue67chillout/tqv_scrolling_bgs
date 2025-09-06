@@ -143,17 +143,13 @@ module bg_pixel_planets(
     localparam P1_Y = 320;
     localparam P1_R = 48;
 
-    wire signed [11:0] p1x = pix_x - P1_X;
+  wire signed [11:0] p1x = pix_x - P1_X;
     wire signed [11:0] p1y = pix_y - P1_Y;
+    wire [15:0] p1_r_sq    = P1_R * P1_R;
     wire [18:0] dist_sq = p1x*p1x + p1y*p1y;
 
-    wire [7:0] noise = {p1x[2]^p1y[3], p1x[4]^p1y[1], p1y[2]^p1x[5], p1x[0]^p1y[0]};  
-    wire signed [4:0] bump = (noise % 9) - 4; 
-    wire [11:0] distorted_r = P1_R + bump;
-
-    wire [18:0] distorted_r_sq = distorted_r * distorted_r;
-
-    wire in_p1 = (dist_sq <= distorted_r_sq);
+   
+    wire in_p1 = (dist_sq <= p1_r_sq);
 
     reg [1:0] p1_red, p1_green, p1_blue;
 
@@ -172,8 +168,7 @@ module bg_pixel_planets(
         end else begin
             p1_red = 2'd0; p1_green = 2'd0; p1_blue = 2'd0; 
         end
-    end
-
+    enD
     //------------------------------------------Planet-2 (Earth)-----------------------------------------
 
     localparam P2_X = 480;
@@ -267,9 +262,9 @@ module bg_pixel_planets(
 
     //----------------------------Planet-4 (Uranus)-----------------------------------------
 
-    localparam P4_X = 928;
-    localparam P4_Y = 128;
-    localparam P4_R = 64;
+  localparam P4_X = (DISPLAY_MODE == 0) ? 580 : 928;
+    localparam P4_Y = (DISPLAY_MODE == 0) ? 80 : 128;
+    localparam P4_R = (DISPLAY_MODE == 0) ? 40 : 64;
 
     wire [9:0] p4_dx = (pix_x > P4_X) ? (pix_x - P4_X) : (P4_X - pix_x);
     wire [9:0] p4_dy = (pix_y > P4_Y) ? (pix_y - P4_Y) : (P4_Y - pix_y);
@@ -280,27 +275,20 @@ module bg_pixel_planets(
 
     reg [1:0] p4_red, p4_green, p4_blue;
 
-    wire [2:0] noise4 = (pix_x[6:4] ^ pix_y[5:3]) + (pix_x[3] ^ pix_y[4]); 
-    
     always @(*) begin
         if (in_p4) begin
-            
-            if (noise4 < 7) begin
-                p4_red   = 2'b00;  
-                p4_green = 2'b10;  
-                p4_blue  = 2'b10;  
-            end else begin
+        
+         
                 p4_red   = 2'b0;  
-                p4_green = 2'b01;  
-                p4_blue  = 2'b01; 
+                p4_green = 2'b10;  
+                p4_blue  = 2'b10; 
             end
-        end else begin
+         else begin
             p4_red   = 2'b00;
             p4_green = 2'b00;
             p4_blue  = 2'b00;
         end
     end
-
 
     //--------------------------------Sun------------------------------------
     localparam SUN_X = 80;
