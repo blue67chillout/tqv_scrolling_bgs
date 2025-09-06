@@ -190,19 +190,19 @@ module bg_pixel_mario(
     wire in_pipe_cap = (pix_x >= PIPE_CAP_X) && (pix_x < PIPE_CAP_X + PIPE_CAP_W) &&
                       (pix_y >= PIPE_CAP_Y) && (pix_y < PIPE_Y);
 
-    wire stem_border_side = ((pix_x == PIPE_X) || (pix_x == PIPE_X + PIPE_W - 1)) &&
-                            (pix_y >= PIPE_Y) && (pix_y < PIPE_Y + PIPE_H);
+    // wire stem_border_side = ((pix_x == PIPE_X) || (pix_x == PIPE_X + PIPE_W - 1)) &&
+    //                         (pix_y >= PIPE_Y) && (pix_y < PIPE_Y + PIPE_H);
 
-    wire stem_border_top  = (pix_y == PIPE_Y) &&
-                            (pix_x >= PIPE_X) && (pix_x < PIPE_X + PIPE_W);
+    // wire stem_border_top  = (pix_y == PIPE_Y) &&
+    //                         (pix_x >= PIPE_X) && (pix_x < PIPE_X + PIPE_W);
 
-    wire cap_border_side  = ((pix_x == PIPE_CAP_X) || (pix_x == PIPE_CAP_X + PIPE_CAP_W - 1)) &&
-                            (pix_y >= PIPE_CAP_Y) && (pix_y < PIPE_Y);
+    // wire cap_border_side  = ((pix_x == PIPE_CAP_X) || (pix_x == PIPE_CAP_X + PIPE_CAP_W - 1)) &&
+    //                         (pix_y >= PIPE_CAP_Y) && (pix_y < PIPE_Y);
 
-    wire cap_border_top   = (pix_y == PIPE_CAP_Y) &&
-                            (pix_x >= PIPE_CAP_X) && (pix_x < PIPE_CAP_X + PIPE_CAP_W);
+    // wire cap_border_top   = (pix_y == PIPE_CAP_Y) &&
+    //                         (pix_x >= PIPE_CAP_X) && (pix_x < PIPE_CAP_X + PIPE_CAP_W);
 
-    wire is_pipe_border = stem_border_side || stem_border_top || cap_border_side || cap_border_top;
+    // wire is_pipe_border = stem_border_side || stem_border_top || cap_border_side || cap_border_top;
     wire is_pipe_fill = in_pipe_stem || in_pipe_cap;
 
     //------------------------------- Sun --------------------------------
@@ -223,48 +223,28 @@ module bg_pixel_mario(
 
     //-------------------------------Brick bg ----------------------------
 
-    wire groud_brick_bg = (pix_y >= GROUND_Y);
+    // wire groud_brick_bg = (pix_y >= GROUND_Y);
 
-    localparam FLOAT_BRICK_Y_OFFSET = 5; 
-    localparam FLOAT_BRICK_X_OFFSET = 5; 
+    // localparam FLOAT_BRICK_Y_OFFSET = 5; 
+    // localparam FLOAT_BRICK_X_OFFSET = 5; 
 
-    wire floating_brick_bg = ((pix_y >= FBRICK_Y) && (pix_y <= FBRICK_Y + 4*FBRICK_H - FLOAT_BRICK_Y_OFFSET) 
-                            && (pix_x >= FBRICK_X) && (pix_x <= FBRICK_X - FLOAT_BRICK_X_OFFSET + 20*FBRICK_W));
+    // wire floating_brick_bg = ((pix_y >= FBRICK_Y) && (pix_y <= FBRICK_Y + 4*FBRICK_H - FLOAT_BRICK_Y_OFFSET) 
+    //                         && (pix_x >= FBRICK_X) && (pix_x <= FBRICK_X - FLOAT_BRICK_X_OFFSET + 20*FBRICK_W));
 
-    wire brick_bg_black = groud_brick_bg || floating_brick_bg;
+    // wire brick_bg_black = groud_brick_bg || floating_brick_bg;
 
     //------------------------- Final Output -----------------------------
     assign R = (!video_active)      ? 2'b00 :
-                is_pipe_border      ? 2'b00 :
-                is_pipe_fill        ? 2'b00 :
-                is_bush_fill        ? 2'b00 :
+                is_pipe_fill        ? 2'b11 :
+                is_bush_fill        ? 2'b11 :
                 is_brick_pixel      ? 2'b11 :
                 is_floating_brick   ? 2'b11 :
-                brick_bg_black      ? 2'b00 :
                 is_cloud            ? 2'b11 :
                 is_sun              ? 2'b11 :
-                2'b10;
+                2'b00;
 
-    assign G = (!video_active)      ? 2'b00 :
-                is_pipe_border      ? 2'b00 :
-                is_pipe_fill        ? 2'b10 :
-                is_bush_fill        ? 2'b10 :
-                is_brick_pixel      ? 2'b01 :
-                is_floating_brick   ? 2'b01 :
-                brick_bg_black      ? 2'b00 :
-                is_cloud            ? 2'b11 :
-                is_sun              ? 2'b11 :
-                2'b10;
+    assign G = R;
 
-    assign B = (!video_active)      ? 2'b00 :
-                is_pipe_border      ? 2'b00 :
-                is_pipe_fill        ? 2'b00 :
-                is_bush_fill        ? 2'b00 :
-                is_brick_pixel      ? 2'b00 :
-                is_floating_brick       ? 2'b00 :
-                brick_bg_black      ? 2'b00 :
-                is_cloud            ? 2'b11 :
-                is_sun              ? 2'b00 :
-                2'b11;
+    assign B = R;
 
 endmodule
